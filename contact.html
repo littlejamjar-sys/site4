@@ -6,6 +6,10 @@
   <meta name="description" content="Get in touch with JamJar Campervan Services to book window fitting, roof vents, insulation, interior builds or a conversion consultation.">
   <title>Get a Quote — JamJar Campervan Services</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚐</text></svg>">
   <link rel="stylesheet" href="styles.css">
   <script>
     tailwind.config = {
@@ -112,31 +116,31 @@
 
         <div class="bg-brand-dark rounded-2xl p-8">
           <h3 class="text-white font-semibold text-lg mb-6">Send a Message</h3>
-          <form action="https://admin.littlejamjar.com/submit.php" method="POST" class="flex flex-col gap-4">
+          <form action="https://admin.littlejamjar.com/submit.php" method="POST" class="flex flex-col gap-4" aria-label="Contact form">
             <input type="hidden" name="site" value="camper">
-            <input type="text" name="website" style="display:none" tabindex="-1" autocomplete="off">
+            <input type="text" name="website" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
 
             <div>
-              <label class="block text-white/60 text-xs font-medium uppercase tracking-wider mb-1">Your Name</label>
-              <input type="text" name="name" placeholder="Jane Smith" required
+              <label for="name" class="block text-white/60 text-xs font-medium uppercase tracking-wider mb-1">Your Name</label>
+              <input type="text" id="name" name="name" placeholder="Jane Smith" required
                 class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white text-sm placeholder-white/30 focus:outline-none focus:border-brand-amber transition-colors">
             </div>
 
             <div>
-              <label class="block text-white/60 text-xs font-medium uppercase tracking-wider mb-1">Email Address</label>
-              <input type="email" name="email" placeholder="jane@example.com" required
+              <label for="email" class="block text-white/60 text-xs font-medium uppercase tracking-wider mb-1">Email Address</label>
+              <input type="email" id="email" name="email" placeholder="jane@example.com" required
                 class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white text-sm placeholder-white/30 focus:outline-none focus:border-brand-amber transition-colors">
             </div>
 
             <div>
-              <label class="block text-white/60 text-xs font-medium uppercase tracking-wider mb-1">Van Make &amp; Model</label>
-              <input type="text" name="service" placeholder="e.g. VW T5 LWB, Ford Transit Custom"
+              <label for="service" class="block text-white/60 text-xs font-medium uppercase tracking-wider mb-1">Van Make &amp; Model</label>
+              <input type="text" id="service" name="service" placeholder="e.g. VW T5 LWB, Ford Transit Custom"
                 class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white text-sm placeholder-white/30 focus:outline-none focus:border-brand-amber transition-colors">
             </div>
 
             <div>
-              <label class="block text-white/60 text-xs font-medium uppercase tracking-wider mb-1">Work Required &amp; Message</label>
-              <textarea name="message" rows="5" required
+              <label for="message" class="block text-white/60 text-xs font-medium uppercase tracking-wider mb-1">Work Required &amp; Message</label>
+              <textarea id="message" name="message" rows="5" required
                 placeholder="Describe the work you need, your location, and any preferred dates..."
                 class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white text-sm placeholder-white/30 focus:outline-none focus:border-brand-amber transition-colors resize-none"></textarea>
             </div>
