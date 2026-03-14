@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Get in touch with JamJar Campervan Services to book window fitting, roof vents, insulation, interior builds or a conversion consultation.">
+  <title>Get a Quote — JamJar Campervan Services</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              dark:   '#1a1f2e',
+              mid:    '#252d3d',
+              amber:  '#e8a020',
+              amberlt:'#f5bc50',
+              light:  '#f0ede8',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'Arial', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body class="bg-brand-light text-brand-dark font-sans">
+
+  <!-- ── NAV ───────────────────────────────────────────────────── -->
+  <header class="fixed top-0 w-full z-50 bg-brand-dark/95 backdrop-blur-sm">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2 group">
+        <span class="text-brand-amber font-bold text-xl tracking-tight group-hover:text-brand-amberlt transition-colors">JamJar</span>
+        <span class="text-white/70 font-light text-sm hidden sm:inline">Campervan Services</span>
+      </a>
+      <nav class="flex items-center gap-1">
+        <a href="index.html"    class="nav-link">Home</a>
+        <a href="services.html" class="nav-link">Services</a>
+        <a href="contact.html"  class="nav-link cta-nav active-cta">Get a Quote</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── PAGE HERO ──────────────────────────────────────────────── -->
+  <section class="relative pt-16 overflow-hidden">
+    <div class="relative h-64 sm:h-80">
+      <img src="images/Screenshot_20260312_182827_Gallery.jpg"
+           alt="Two campervans at golden-hour mountain viewpoint"
+           class="w-full h-full object-cover object-center">
+      <div class="absolute inset-0 bg-gradient-to-b from-brand-dark/40 to-brand-dark/80"></div>
+      <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+        <p class="text-brand-amber font-semibold text-sm uppercase tracking-widest mb-3">Let's get started</p>
+        <h1 class="text-white font-extrabold text-4xl sm:text-5xl">Get a Quote</h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CONTACT SECTION ────────────────────────────────────────── -->
+  <section class="py-20 px-6">
+    <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-12">
+
+      <!-- Left: instructions -->
+      <div>
+        <h2 class="text-brand-dark font-bold text-2xl mb-2">Send me a message</h2>
+        <p class="text-brand-dark/70 mb-8 leading-relaxed">
+          Drop me an email with the details below and I'll come back with availability and a quote as soon as I can.
+        </p>
+
+        <div class="space-y-5 mb-10">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-amber/20 flex items-center justify-center text-brand-amber font-bold text-sm">1</div>
+            <div>
+              <h3 class="font-semibold text-brand-dark mb-1">Van make &amp; model</h3>
+              <p class="text-brand-dark/60 text-sm">e.g. VW T5 LWB, Ford Transit Custom, Mercedes Sprinter</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-amber/20 flex items-center justify-center text-brand-amber font-bold text-sm">2</div>
+            <div>
+              <h3 class="font-semibold text-brand-dark mb-1">Work required</h3>
+              <p class="text-brand-dark/60 text-sm">Which services you need — the more detail the better for quoting</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-amber/20 flex items-center justify-center text-brand-amber font-bold text-sm">3</div>
+            <div>
+              <h3 class="font-semibold text-brand-dark mb-1">Your location</h3>
+              <p class="text-brand-dark/60 text-sm">Town/city and whether you need mobile service or can travel to a workshop</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-amber/20 flex items-center justify-center text-brand-amber font-bold text-sm">4</div>
+            <div>
+              <h3 class="font-semibold text-brand-dark mb-1">Preferred dates</h3>
+              <p class="text-brand-dark/60 text-sm">Any dates that work best or deadlines to bear in mind</p>
+            </div>
+          </div>
+        </div>
+
+        <p class="text-brand-dark/60 text-sm italic">I'll reply with availability and a quote — usually within 24–48 hours.</p>
+      </div>
+
+      <!-- Right: contact form + info card -->
+      <div class="flex flex-col gap-6">
+
+        <div class="bg-brand-dark rounded-2xl p-8">
+          <h3 class="text-white font-semibold text-lg mb-6">Send a Message</h3>
+          <form action="https://admin.littlejamjar.com/submit.php" method="POST" class="flex flex-col gap-4">
+            <input type="hidden" name="site" value="camper">
+            <input type="text" name="website" style="display:none" tabindex="-1" autocomplete="off">
+
+            <div>
+              <label class="block text-white/60 text-xs font-medium uppercase tracking-wider mb-1">Your Name</label>
+              <input type="text" name="name" placeholder="Jane Smith" required
+                class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white text-sm placeholder-white/30 focus:outline-none focus:border-brand-amber transition-colors">
+            </div>
+
+            <div>
+              <label class="block text-white/60 text-xs font-medium uppercase tracking-wider mb-1">Email Address</label>
+              <input type="email" name="email" placeholder="jane@example.com" required
+                class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white text-sm placeholder-white/30 focus:outline-none focus:border-brand-amber transition-colors">
+            </div>
+
+            <div>
+              <label class="block text-white/60 text-xs font-medium uppercase tracking-wider mb-1">Van Make &amp; Model</label>
+              <input type="text" name="service" placeholder="e.g. VW T5 LWB, Ford Transit Custom"
+                class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white text-sm placeholder-white/30 focus:outline-none focus:border-brand-amber transition-colors">
+            </div>
+
+            <div>
+              <label class="block text-white/60 text-xs font-medium uppercase tracking-wider mb-1">Work Required &amp; Message</label>
+              <textarea name="message" rows="5" required
+                placeholder="Describe the work you need, your location, and any preferred dates..."
+                class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white text-sm placeholder-white/30 focus:outline-none focus:border-brand-amber transition-colors resize-none"></textarea>
+            </div>
+
+            <button type="submit"
+              class="w-full bg-brand-amber hover:bg-brand-amberlt text-brand-dark font-semibold py-3 rounded-lg transition-all hover:-translate-y-0.5 shadow-md">
+              Request a Quote
+            </button>
+          </form>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 border border-brand-dark/10">
+          <h3 class="font-semibold text-brand-dark mb-3 flex items-center gap-2">
+            <svg class="w-5 h-5 text-brand-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Good to know
+          </h3>
+          <ul class="space-y-2 text-brand-dark/70 text-sm">
+            <li class="flex items-start gap-2">
+              <span class="text-brand-amber mt-0.5">&#10003;</span>
+              <span>Mobile service available — I can come to you</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-brand-amber mt-0.5">&#10003;</span>
+              <span>All van makes and models catered for</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-brand-amber mt-0.5">&#10003;</span>
+              <span>Free quotes with no obligation</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-brand-amber mt-0.5">&#10003;</span>
+              <span>Work done to a standard I'd use on my own van</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────────── -->
+  <footer class="bg-brand-dark py-10 px-6">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        <span class="text-brand-amber font-bold text-lg">JamJar</span>
+        <span class="text-white/50 text-sm ml-2">Campervan Services</span>
+      </div>
+      <nav class="flex gap-6 text-white/50 text-sm">
+        <a href="index.html"    class="hover:text-white transition-colors">Home</a>
+        <a href="services.html" class="hover:text-white transition-colors">Services</a>
+        <a href="contact.html"  class="hover:text-white transition-colors">Contact</a>
+      </nav>
+      <p class="text-white/30 text-sm">&copy; 2026 JamJar Campervan Services</p>
+    </div>
+  </footer>
+
+</body>
+</html>

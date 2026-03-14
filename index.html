@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="JamJar Campervan Services — professional van conversions, window fitting, roof vents, insulation and interior builds. Mobile service available.">
+  <title>JamJar Campervan Services</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              dark:   '#1a1f2e',
+              mid:    '#252d3d',
+              amber:  '#e8a020',
+              amberlt:'#f5bc50',
+              light:  '#f0ede8',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'Arial', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body class="bg-brand-light text-brand-dark font-sans">
+
+  <!-- ── NAV ───────────────────────────────────────────────────── -->
+  <header class="fixed top-0 w-full z-50 bg-brand-dark/95 backdrop-blur-sm">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2 group">
+        <span class="text-brand-amber font-bold text-xl tracking-tight group-hover:text-brand-amberlt transition-colors">JamJar</span>
+        <span class="text-white/70 font-light text-sm hidden sm:inline">Campervan Services</span>
+      </a>
+      <nav class="flex items-center gap-1">
+        <a href="index.html"    class="nav-link active">Home</a>
+        <a href="services.html" class="nav-link">Services</a>
+        <a href="contact.html"  class="nav-link cta-nav">Get a Quote</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── HERO ──────────────────────────────────────────────────── -->
+  <section class="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0">
+      <img
+        src="images/Screenshot_20260312_182843_Gallery.jpg"
+        alt="Campervan parked at Atlantic cliff viewpoint"
+        class="w-full h-full object-cover object-center"
+      >
+      <div class="absolute inset-0 bg-gradient-to-b from-brand-dark/60 via-brand-dark/40 to-brand-dark/80"></div>
+    </div>
+    <div class="relative z-10 text-center px-6 max-w-3xl mx-auto">
+      <p class="text-brand-amber font-semibold text-sm uppercase tracking-widest mb-4">Professional Van Conversion Work</p>
+      <h1 class="text-white font-extrabold text-4xl sm:text-5xl md:text-6xl leading-tight mb-6">
+        Turn Your Van Into<br>
+        <span class="text-brand-amber">Your Adventure</span>
+      </h1>
+      <p class="text-white/80 text-lg sm:text-xl mb-10 max-w-xl mx-auto leading-relaxed">
+        Windows, roof vents, insulation, interiors — done properly, at your location or our workshop.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="contact.html"  class="btn-primary">Get a Free Quote</a>
+        <a href="services.html" class="btn-ghost">See All Services</a>
+      </div>
+    </div>
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+      <svg class="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ── SERVICES STRIP ─────────────────────────────────────────── -->
+  <section class="bg-brand-dark py-16 px-6">
+    <div class="max-w-6xl mx-auto">
+      <p class="text-brand-amber font-semibold text-sm uppercase tracking-widest text-center mb-10">What I Do</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <div class="service-card">
+          <div class="service-icon">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 8V6a2 2 0 012-2h2M4 16v2a2 2 0 002 2h2m8-16h2a2 2 0 012 2v2m-4 12h2a2 2 0 002-2v-2"/>
+            </svg>
+          </div>
+          <h3 class="text-white font-semibold text-lg mb-2">Window Installation</h3>
+          <p class="text-white/60 text-sm leading-relaxed">Professional cutting and fitting of campervan windows with proper sealing and a clean finish.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </div>
+          <h3 class="text-white font-semibold text-lg mb-2">Roof Vent Fitting</h3>
+          <p class="text-white/60 text-sm leading-relaxed">MaxxAir, Fiamma and other ventilation systems fitted correctly — no leaks, no worries.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/>
+            </svg>
+          </div>
+          <h3 class="text-white font-semibold text-lg mb-2">Insulation &amp; Wall Prep</h3>
+          <p class="text-white/60 text-sm leading-relaxed">Proper insulation fitted right, giving you a solid base for your full interior build.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/>
+            </svg>
+          </div>
+          <h3 class="text-white font-semibold text-lg mb-2">Interior Build Help</h3>
+          <p class="text-white/60 text-sm leading-relaxed">Hands-on labour for cabinetry, layouts and build stages — from one panel to the whole fit-out.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+            </svg>
+          </div>
+          <h3 class="text-white font-semibold text-lg mb-2">Conversion Consultation</h3>
+          <p class="text-white/60 text-sm leading-relaxed">Advice on planning, materials, tools and conversion stages — whether you're starting out or stuck midway.</p>
+        </div>
+
+        <div class="service-card border-brand-amber/30 bg-brand-amber/5">
+          <div class="service-icon bg-brand-amber/20 text-brand-amber">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <h3 class="text-white font-semibold text-lg mb-2">Mobile Service</h3>
+          <p class="text-white/60 text-sm leading-relaxed">I come to you. Work carried out from a fully equipped service van wherever possible.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PHOTO GALLERY ─────────────────────────────────────────── -->
+  <section class="py-16 px-6 bg-brand-light">
+    <div class="max-w-6xl mx-auto">
+      <p class="text-brand-amber font-semibold text-sm uppercase tracking-widest text-center mb-3">The Van Life</p>
+      <h2 class="text-center text-brand-dark font-bold text-3xl mb-10">Built for the Road</h2>
+
+      <!-- Row 1: cliff wide (2 cols) + forest -->
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-3">
+        <div class="col-span-2 overflow-hidden rounded-xl">
+          <img src="images/Screenshot_20260312_182843_Gallery.jpg"
+               alt="VW T5 campervan at Atlantic cliff viewpoint"
+               class="w-full h-52 md:h-64 object-cover object-center hover:scale-105 transition-transform duration-500">
+        </div>
+        <div class="col-span-2 md:col-span-1 overflow-hidden rounded-xl">
+          <img src="images/1.jpg"
+               alt="VW T5 campervan on cobbled driveway in pine forest"
+               class="w-full h-52 md:h-64 object-cover object-center hover:scale-105 transition-transform duration-500">
+        </div>
+      </div>
+
+      <!-- Row 2: pop-top, beach front, river dusk — equal thirds -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+        <div class="overflow-hidden rounded-xl">
+          <img src="images/3.jpg"
+               alt="VW T5 campervan with pop-top roof raised"
+               class="w-full h-52 object-cover object-center hover:scale-105 transition-transform duration-500">
+        </div>
+        <div class="overflow-hidden rounded-xl">
+          <img src="images/4.jpg"
+               alt="VW T5 campervan front view at beach carpark"
+               class="w-full h-52 object-cover object-center hover:scale-105 transition-transform duration-500">
+        </div>
+        <div class="overflow-hidden rounded-xl">
+          <img src="images/5.jpg"
+               alt="Campervan wild camping beside a river at dusk"
+               class="w-full h-52 object-cover object-center hover:scale-105 transition-transform duration-500">
+        </div>
+      </div>
+
+      <!-- Row 3: sunset wide + husky -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="col-span-2 md:col-span-1 overflow-hidden rounded-xl">
+          <img src="images/Screenshot_20260312_182827_Gallery.jpg"
+               alt="Two campervans at sunset mountain viewpoint with husky dog"
+               class="w-full h-56 object-cover object-center hover:scale-105 transition-transform duration-500">
+        </div>
+        <div class="col-span-2 md:col-span-1 overflow-hidden rounded-xl">
+          <img src="images/Screenshot_20260312_182904_Gallery.jpg"
+               alt="Husky dog sitting in front of campervan with pop-top open"
+               class="w-full h-56 object-cover object-center hover:scale-105 transition-transform duration-500">
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── WHY ME ──────────────────────────────────────────────────── -->
+  <section class="bg-brand-mid py-20 px-6">
+    <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+      <div>
+        <p class="text-brand-amber font-semibold text-sm uppercase tracking-widest mb-4">Why JamJar?</p>
+        <h2 class="text-white font-bold text-3xl sm:text-4xl mb-6 leading-tight">
+          Done by someone who actually<br>lives in their van.
+        </h2>
+        <p class="text-white/70 leading-relaxed mb-6">
+          I've built and converted my own van from the ground up and have been living and travelling in it ever since. That means I know exactly what works, what doesn't, and what corners to never cut.
+        </p>
+        <p class="text-white/70 leading-relaxed mb-8">
+          Every job is carried out carefully, with the right materials, and finished to a standard I'd be happy with on my own van.
+        </p>
+        <a href="contact.html" class="btn-primary">Get a Quote</a>
+      </div>
+      <div class="relative rounded-2xl overflow-hidden" style="aspect-ratio:4/3;">
+        <img src="images/5.jpg"
+             alt="Campervan wild camping beside a still river at dusk"
+             class="w-full h-full object-cover">
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA BANNER ─────────────────────────────────────────────── -->
+  <section class="bg-brand-amber py-16 px-6 text-center">
+    <h2 class="text-brand-dark font-extrabold text-3xl sm:text-4xl mb-4">Ready to start your build?</h2>
+    <p class="text-brand-dark/80 text-lg mb-8 max-w-xl mx-auto">Get in touch with your van details and what you need — I'll come back with availability and a quote.</p>
+    <a href="contact.html" class="inline-block bg-brand-dark text-white font-semibold px-8 py-4 rounded-full hover:bg-brand-mid transition-colors text-lg">
+      Schedule Work &rarr;
+    </a>
+  </section>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────────── -->
+  <footer class="bg-brand-dark py-10 px-6">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        <span class="text-brand-amber font-bold text-lg">JamJar</span>
+        <span class="text-white/50 text-sm ml-2">Campervan Services</span>
+      </div>
+      <nav class="flex gap-6 text-white/50 text-sm">
+        <a href="index.html"    class="hover:text-white transition-colors">Home</a>
+        <a href="services.html" class="hover:text-white transition-colors">Services</a>
+        <a href="contact.html"  class="hover:text-white transition-colors">Contact</a>
+      </nav>
+      <p class="text-white/30 text-sm">&copy; 2026 JamJar Campervan Services</p>
+    </div>
+  </footer>
+
+</body>
+</html>

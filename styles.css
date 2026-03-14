@@ -1,0 +1,124 @@
+/* ─────────────────────────────────────────────────────────────────
+   JamJar Campervan Services — custom styles (Tailwind supplement)
+   Tailwind CDN handles layout/spacing/colour utilities.
+   This file handles: shared component classes, nav states, buttons.
+───────────────────────────────────────────────────────────────── */
+
+/* ── Nav links ─────────────────────────────────────────────────── */
+.nav-link {
+  color: rgba(255,255,255,0.65);
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  text-decoration: none;
+  transition: color 0.15s, background 0.15s;
+}
+.nav-link:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.08);
+}
+.nav-link.active {
+  color: #e8a020;
+}
+.nav-link.cta-nav {
+  background: #e8a020;
+  color: #1a1f2e;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+.nav-link.cta-nav:hover {
+  background: #f5bc50;
+  color: #1a1f2e;
+}
+.nav-link.active-cta {
+  background: #f5bc50;
+}
+
+/* ── Buttons ────────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-block;
+  background: #e8a020;
+  color: #1a1f2e;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.875rem 2rem;
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: background 0.15s, transform 0.15s;
+}
+.btn-primary:hover {
+  background: #f5bc50;
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  display: inline-block;
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.875rem 2rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255,255,255,0.25);
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+}
+.btn-ghost:hover {
+  background: rgba(255,255,255,0.2);
+  border-color: rgba(255,255,255,0.5);
+}
+
+/* ── Service cards (homepage strip) ────────────────────────────── */
+.service-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 1rem;
+  padding: 1.75rem;
+  transition: border-color 0.2s, background 0.2s;
+}
+.service-card:hover {
+  border-color: rgba(232,160,32,0.4);
+  background: rgba(255,255,255,0.08);
+}
+
+.service-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.75rem;
+  background: rgba(232,160,32,0.15);
+  color: #e8a020;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+/* ── Service detail cards (services page) ───────────────────────── */
+.service-detail-card {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 2rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.06);
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.service-detail-card:hover {
+  box-shadow: 0 6px 24px rgba(0,0,0,0.10);
+  border-color: rgba(232,160,32,0.3);
+}
+
+.service-detail-icon {
+  flex-shrink: 0;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 0.875rem;
+  background: rgba(232,160,32,0.12);
+  color: #e8a020;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

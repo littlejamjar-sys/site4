@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Message Sent — JamJar Campervan Services</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              dark:   '#1a1f2e',
+              mid:    '#252d3d',
+              amber:  '#e8a020',
+              amberlt:'#f5bc50',
+              light:  '#f0ede8',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'Arial', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body class="bg-brand-light text-brand-dark font-sans">
+
+  <!-- NAV -->
+  <header class="fixed top-0 w-full z-50 bg-brand-dark/95 backdrop-blur-sm">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2 group">
+        <span class="text-brand-amber font-bold text-xl tracking-tight group-hover:text-brand-amberlt transition-colors">JamJar</span>
+        <span class="text-white/70 font-light text-sm hidden sm:inline">Campervan Services</span>
+      </a>
+      <nav class="flex items-center gap-1">
+        <a href="index.html"    class="nav-link">Home</a>
+        <a href="services.html" class="nav-link">Services</a>
+        <a href="contact.html"  class="nav-link cta-nav">Get a Quote</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="relative pt-16 overflow-hidden">
+    <div class="relative h-64 sm:h-80">
+      <img src="images/Screenshot_20260312_182827_Gallery.jpg"
+           alt="Two campervans at golden-hour mountain viewpoint"
+           class="w-full h-full object-cover object-center">
+      <div class="absolute inset-0 bg-gradient-to-b from-brand-dark/40 to-brand-dark/80"></div>
+      <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+        <p class="text-brand-amber font-semibold text-sm uppercase tracking-widest mb-3">You're all set</p>
+        <h1 class="text-white font-extrabold text-4xl sm:text-5xl">Message Sent!</h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTENT -->
+  <section class="py-20 px-6 text-center">
+    <div class="max-w-xl mx-auto">
+      <p class="text-brand-dark/70 text-lg mb-10 leading-relaxed">
+        Thanks for getting in touch. I'll come back to you with availability and a quote — usually within 24–48 hours.
+      </p>
+      <a href="index.html"
+         class="inline-block bg-brand-amber hover:bg-brand-amberlt text-brand-dark font-semibold py-3 px-8 rounded-lg transition-all hover:-translate-y-0.5 shadow-md">
+        Back to Home
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-brand-dark py-10 px-6">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        <span class="text-brand-amber font-bold text-lg">JamJar</span>
+        <span class="text-white/50 text-sm ml-2">Campervan Services</span>
+      </div>
+      <nav class="flex gap-6 text-white/50 text-sm">
+        <a href="index.html"    class="hover:text-white transition-colors">Home</a>
+        <a href="services.html" class="hover:text-white transition-colors">Services</a>
+        <a href="contact.html"  class="hover:text-white transition-colors">Contact</a>
+      </nav>
+      <p class="text-white/30 text-sm">&copy; 2026 JamJar Campervan Services</p>
+    </div>
+  </footer>
+
+</body>
+</html>
