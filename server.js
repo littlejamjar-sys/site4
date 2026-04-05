@@ -69,6 +69,7 @@ app.use('/public', express.static(path.join(__dirname, 'public'), {
 
 // Sessions
 const isProduction = process.env.NODE_ENV === 'production';
+app.set('trust proxy', 1);
 app.use(session({
     store: new SQLiteStore({
         db: 'sessions.sqlite',
@@ -76,9 +77,9 @@ app.use(session({
     }),
     secret: process.env.SESSION_SECRET || 'change-this-secret',
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     cookie: {
-        secure: isProduction,
+        secure: process.env.SECURE_COOKIES !== 'false', // Set to 'false' for HTTP testing
         httpOnly: true,
         sameSite: 'lax',
         maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
@@ -94,7 +95,7 @@ app.use(passport.session());
 const csrfProtection = csrf();
 app.use((req, res, next) => {
     // Skip CSRF for API JSON endpoints
-    if (req.method === 'POST' && req.path === '/auth/register') return next();
+    if (req.method === 'POST' && (req.path === '/auth/register' || req.path === '/auth/login')) return next();
     if (req.path.startsWith('/api/')) {
         return next();
     }
@@ -145,12 +146,22 @@ app.use((req, res, next) => {
 
 // Flash messages (simple implementation without extra dependency)
 app.use((req, res, next) => {
-    res.locals.flash = req.session.flash || {};
-    delete req.session.flash;
-    req.flash = (type, message) => {
-        req.session.flash = req.session.flash || {};
-        req.session.flash[type] = message;
-    };
+    try {
+        res.locals.flash = (req.session && req.session.flash) || {};
+        if (req.session && req.session.flash) {
+            delete req.session.flash;
+        }
+        req.flash = (type, message) => {
+            if (!req.session) {
+                console.warn('Flash called but session unavailable');
+                return;
+            }
+            req.session.flash = req.session.flash || {};
+            req.session.flash[type] = message;
+        };
+    } catch (e) {
+        console.error('Flash middleware error:', e.message);
+    }
     next();
 });
 
@@ -177,8 +188,11 @@ app.use((req, res) => {
 // Error handler
 app.use((err, req, res, next) => {
     if (err.code === 'EBADCSRFTOKEN') {
-        req.flash('error', 'Form expired. Please try again.');
-        return res.redirect('back');
+        return res.status(403).render('error', { 
+            title: '403 — Invalid Request', 
+            message: 'Your form expired or was invalid. Please try again.',
+            status: 403
+        });
     }
     console.error(err.stack);
     const status = err.status || 500;

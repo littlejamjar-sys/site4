@@ -63,16 +63,24 @@ router.get('/login', (req, res) => {
 // POST /auth/login
 router.post('/login', (req, res, next) => {
     passport.authenticate('local', (err, user, info) => {
-        if (err) return next(err);
+        if (err) {
+            return next(err);
+        }
         if (!user) {
             return res.render('auth/login', { title: 'Log In', errors: [info.message || 'Invalid credentials.'], email: req.body.email });
         }
         req.login(user, (err) => {
-            if (err) return next(err);
+            if (err) {
+                return next(err);
+            }
             const returnTo = req.session.returnTo || '/';
             delete req.session.returnTo;
             req.flash('success', `Welcome back, ${user.display_name || user.username}!`);
-            res.redirect(returnTo);
+            // Ensure session is saved before redirect
+            req.session.save((saveErr) => {
+                if (saveErr) console.error('Session save error:', saveErr);
+                res.redirect(returnTo);
+            });
         });
     })(req, res, next);
 });
