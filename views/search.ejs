@@ -1,0 +1,106 @@
+<%- include('layouts/main') %>
+
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <h1 class="text-3xl font-display font-bold text-slate-100 mb-6">Search</h1>
+
+    <form action="/search" method="GET" class="mb-8">
+        <div class="flex gap-2">
+            <div class="relative flex-1">
+                <input type="text" name="q" value="<%= query %>" placeholder="Search articles, forum, spots, routes..."
+                    class="w-full bg-slate-800 border border-slate-700 rounded-lg pl-10 pr-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+                <i data-lucide="search" class="w-5 h-5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2"></i>
+            </div>
+            <button type="submit" class="bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold px-6 rounded-lg transition-colors">Search</button>
+        </div>
+    </form>
+
+    <% if (query) { %>
+    <!-- Type Tabs -->
+    <div class="flex items-center gap-1 mb-6 border-b border-slate-700 overflow-x-auto">
+        <% const types = [{key:'all',label:'All'},{key:'articles',label:'Articles'},{key:'forum',label:'Forum'},{key:'campsites',label:'Spots'},{key:'routes',label:'Routes'}]; %>
+        <% types.forEach(t => { %>
+        <a href="/search?q=<%= encodeURIComponent(query) %>&type=<%= t.key %>"
+           class="px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 -mb-px transition-colors <%= type === t.key ? 'border-amber-400 text-amber-400' : 'border-transparent text-slate-400 hover:text-white' %>">
+            <%= t.label %>
+            <% if (results[t.key] && t.key !== 'all') { %><span class="text-xs ml-1">(<%= results[t.key].length %>)</span><% } %>
+        </a>
+        <% }) %>
+    </div>
+
+    <!-- Articles Results -->
+    <% if (results.articles && results.articles.length > 0) { %>
+    <div class="mb-8">
+        <h2 class="text-lg font-display font-semibold text-slate-200 mb-4 flex items-center gap-2"><i data-lucide="newspaper" class="w-5 h-5"></i> Articles</h2>
+        <div class="space-y-3">
+            <% results.articles.forEach(a => { %>
+            <a href="/articles/<%= a.slug %>" class="block bg-slate-800/50 border border-slate-700 rounded-lg p-4 hover:border-slate-600 transition-colors">
+                <h3 class="font-semibold text-slate-200 hover:text-amber-400"><%= a.title %></h3>
+                <% if (a.summary) { %><p class="text-sm text-slate-400 mt-1 line-clamp-2"><%= a.summary %></p><% } %>
+                <div class="flex items-center gap-3 mt-2 text-xs text-slate-500">
+                    <span>by <%= a.display_name || a.username %></span>
+                    <span class="capitalize"><%= a.category %></span>
+                </div>
+            </a>
+            <% }) %>
+        </div>
+    </div>
+    <% } %>
+
+    <!-- Forum Results -->
+    <% if (results.forum && results.forum.length > 0) { %>
+    <div class="mb-8">
+        <h2 class="text-lg font-display font-semibold text-slate-200 mb-4 flex items-center gap-2"><i data-lucide="messages-square" class="w-5 h-5"></i> Forum Posts</h2>
+        <div class="space-y-3">
+            <% results.forum.forEach(p => { %>
+            <a href="/forum/<%= p.category %>/<%= p.slug %>" class="block bg-slate-800/50 border border-slate-700 rounded-lg p-4 hover:border-slate-600 transition-colors">
+                <h3 class="font-semibold text-slate-200 hover:text-amber-400"><%= p.title %></h3>
+                <div class="flex items-center gap-3 mt-2 text-xs text-slate-500">
+                    <span>by <%= p.display_name || p.username %></span>
+                    <span class="capitalize"><%= p.category %></span>
+                    <span><%= p.reply_count %> replies</span>
+                </div>
+            </a>
+            <% }) %>
+        </div>
+    </div>
+    <% } %>
+
+    <!-- Campsites Results -->
+    <% if (results.campsites && results.campsites.length > 0) { %>
+    <div class="mb-8">
+        <h2 class="text-lg font-display font-semibold text-slate-200 mb-4 flex items-center gap-2"><i data-lucide="tent" class="w-5 h-5"></i> Spots</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <% results.campsites.forEach(campsite => { %>
+            <%- include('partials/campsite-card', { campsite }) %>
+            <% }) %>
+        </div>
+    </div>
+    <% } %>
+
+    <!-- Routes Results -->
+    <% if (results.routes && results.routes.length > 0) { %>
+    <div class="mb-8">
+        <h2 class="text-lg font-display font-semibold text-slate-200 mb-4 flex items-center gap-2"><i data-lucide="map" class="w-5 h-5"></i> Routes</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <% results.routes.forEach(route => { %>
+            <%- include('partials/route-card', { route }) %>
+            <% }) %>
+        </div>
+    </div>
+    <% } %>
+
+    <!-- No results -->
+    <% 
+    const totalResults = (results.articles||[]).length + (results.forum||[]).length + (results.campsites||[]).length + (results.routes||[]).length;
+    if (totalResults === 0) { %>
+    <div class="text-center py-16">
+        <i data-lucide="search-x" class="w-12 h-12 text-slate-600 mx-auto mb-4"></i>
+        <p class="text-lg text-slate-400">No results found for "<%= query %>"</p>
+        <p class="text-sm text-slate-500 mt-2">Try different keywords or check your spelling.</p>
+    </div>
+    <% } %>
+
+    <% } %>
+</div>
+
+<%- include('layouts/end') %>

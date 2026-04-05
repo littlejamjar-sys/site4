@@ -1,0 +1,127 @@
+<%- include('../layouts/main') %>
+
+<div class="max-w-3xl mx-auto px-4 py-8">
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2 text-sm text-slate-400 mb-6">
+        <a href="/routes" class="hover:text-amber-400">Routes</a>
+        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        <span class="text-slate-200">Submit a Route</span>
+    </div>
+
+    <h1 class="text-2xl font-display font-bold text-slate-100 mb-6">Submit a Route</h1>
+
+    <% if (errors && errors.length > 0) { %>
+    <div class="bg-red-900/50 border border-red-700 text-red-200 px-4 py-3 rounded-lg mb-6">
+        <ul class="list-disc list-inside text-sm space-y-1">
+            <% errors.forEach(err => { %>
+            <li><%= err %></li>
+            <% }) %>
+        </ul>
+    </div>
+    <% } %>
+
+    <form method="POST" action="/routes" enctype="multipart/form-data" class="space-y-6">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <!-- Title -->
+        <div>
+            <label for="title" class="block text-sm font-medium text-slate-300 mb-1">Route Title *</label>
+            <input type="text" name="title" id="title" required minlength="3"
+                value="<%= route ? route.title : '' %>"
+                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                placeholder="e.g. The Wild Atlantic Way">
+        </div>
+
+        <!-- Cover Image -->
+        <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1">Cover Image</label>
+            <input type="file" name="cover_image" accept="image/jpeg,image/png,image/webp"
+                class="block w-full text-sm text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-slate-700 file:text-slate-200 hover:file:bg-slate-600 file:cursor-pointer">
+        </div>
+
+        <!-- Country & Region -->
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label for="country" class="block text-sm font-medium text-slate-300 mb-1">Country</label>
+                <input type="text" name="country" id="country"
+                    value="<%= route ? route.country : '' %>"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                    placeholder="Ireland">
+            </div>
+            <div>
+                <label for="region" class="block text-sm font-medium text-slate-300 mb-1">Region</label>
+                <input type="text" name="region" id="region"
+                    value="<%= route ? route.region : '' %>"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                    placeholder="West Coast">
+            </div>
+        </div>
+
+        <!-- Stats row -->
+        <div class="grid grid-cols-3 gap-4">
+            <div>
+                <label for="distance_km" class="block text-sm font-medium text-slate-300 mb-1">Distance (km)</label>
+                <input type="number" name="distance_km" id="distance_km" step="0.1" min="0"
+                    value="<%= route ? route.distance_km : '' %>"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                    placeholder="2500">
+            </div>
+            <div>
+                <label for="duration_days" class="block text-sm font-medium text-slate-300 mb-1">Duration (days)</label>
+                <input type="number" name="duration_days" id="duration_days" min="1"
+                    value="<%= route ? route.duration_days : '' %>"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                    placeholder="14">
+            </div>
+            <div>
+                <label for="difficulty" class="block text-sm font-medium text-slate-300 mb-1">Difficulty</label>
+                <select name="difficulty" id="difficulty"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+                    <option value="">Select...</option>
+                    <% difficulties.forEach(d => { %>
+                    <option value="<%= d %>" <%= route && route.difficulty === d ? 'selected' : '' %> class="capitalize"><%= d %></option>
+                    <% }) %>
+                </select>
+            </div>
+        </div>
+
+        <!-- Best Season -->
+        <div>
+            <label for="best_season" class="block text-sm font-medium text-slate-300 mb-1">Best Season</label>
+            <input type="text" name="best_season" id="best_season"
+                value="<%= route ? route.best_season : '' %>"
+                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                placeholder="e.g. May-September">
+        </div>
+
+        <!-- Waypoints (JSON, advanced) -->
+        <div>
+            <label for="waypoints" class="block text-sm font-medium text-slate-300 mb-1">Waypoints <span class="text-slate-500 font-normal">(click the map to add points, or paste JSON)</span></label>
+            <div id="route-picker-map" class="h-64 w-full rounded-lg border border-slate-700 mb-3" data-mode="route-picker"></div>
+            <textarea name="waypoints" id="waypoints" rows="3"
+                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-slate-100 font-mono placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                placeholder='[{"lat": 51.89, "lng": -9.89, "name": "Start"}, ...]'><%= route && route.waypoints ? route.waypoints : '' %></textarea>
+        </div>
+
+        <!-- Description -->
+        <div>
+            <label for="description" class="block text-sm font-medium text-slate-300 mb-1">Description * <span class="text-slate-500 font-normal">(Markdown supported)</span></label>
+            <textarea name="description" id="description" rows="10" required minlength="10"
+                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                placeholder="Describe the route — highlights, stops, road conditions, tips..."><%= route ? route.description : '' %></textarea>
+        </div>
+
+        <!-- Tags -->
+        <div>
+            <label for="tags" class="block text-sm font-medium text-slate-300 mb-1">Tags <span class="text-slate-500 font-normal">(comma-separated)</span></label>
+            <input type="text" name="tags" id="tags"
+                value="<%= route ? route.tags : '' %>"
+                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                placeholder="coastal, scenic, wild-camping">
+        </div>
+
+        <button type="submit" class="bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold px-8 py-3 rounded-lg transition-colors text-lg">Submit Route</button>
+    </form>
+</div>
+
+<%- include('../layouts/end') %>

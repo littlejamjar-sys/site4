@@ -1,0 +1,59 @@
+<footer class="bg-slate-950 border-t border-slate-800 mt-16">
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <!-- Brand -->
+            <div class="md:col-span-1">
+                <a href="/" class="flex items-center gap-2 text-lg font-display font-bold text-amber-400 mb-3">
+                    <i data-lucide="compass" class="w-6 h-6"></i>
+                    <%= locals.siteName || 'The Overland Post' %>
+                </a>
+                <p class="text-sm text-slate-400 leading-relaxed">A community for vanlifers, overlanders, and motorhome travellers. Share spots, routes, builds, and stories from the road.</p>
+            </div>
+
+            <!-- Explore -->
+            <div>
+                <h4 class="font-display font-semibold text-sm text-slate-200 uppercase tracking-wider mb-3">Explore</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="/articles" class="text-slate-400 hover:text-amber-400 transition-colors">Magazine</a></li>
+                    <li><a href="/forum" class="text-slate-400 hover:text-amber-400 transition-colors">Forum</a></li>
+                    <li><a href="/campsites" class="text-slate-400 hover:text-amber-400 transition-colors">Campsite Map</a></li>
+                    <li><a href="/routes" class="text-slate-400 hover:text-amber-400 transition-colors">Travel Routes</a></li>
+                    <li><a href="/builds" class="text-slate-400 hover:text-amber-400 transition-colors">Build Logs</a></li>
+                </ul>
+            </div>
+
+            <!-- Community -->
+            <div>
+                <h4 class="font-display font-semibold text-sm text-slate-200 uppercase tracking-wider mb-3">Community</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="/forum/general" class="text-slate-400 hover:text-amber-400 transition-colors">General Chat</a></li>
+                    <li><a href="/forum/wild-camping" class="text-slate-400 hover:text-amber-400 transition-colors">Wild Camping</a></li>
+                    <li><a href="/forum/conversions" class="text-slate-400 hover:text-amber-400 transition-colors">Conversions</a></li>
+                    <li><a href="/forum/sell-swap" class="text-slate-400 hover:text-amber-400 transition-colors">Buy/Sell/Swap</a></li>
+                    <li><a href="/forum/meetups" class="text-slate-400 hover:text-amber-400 transition-colors">Meetups</a></li>
+                </ul>
+            </div>
+
+            <!-- Account -->
+            <div>
+                <h4 class="font-display font-semibold text-sm text-slate-200 uppercase tracking-wider mb-3">Account</h4>
+                <ul class="space-y-2 text-sm">
+                    <% if (isAuthenticated) { %>
+                    <li><a href="/auth/profile" class="text-slate-400 hover:text-amber-400 transition-colors">Your Profile</a></li>
+                    <li><a href="/campsites/submit" class="text-slate-400 hover:text-amber-400 transition-colors">Submit a Spot</a></li>
+                    <li><a href="/routes/submit" class="text-slate-400 hover:text-amber-400 transition-colors">Share a Route</a></li>
+                    <li><a href="/builds/new" class="text-slate-400 hover:text-amber-400 transition-colors">Start a Build Log</a></li>
+                    <% } else { %>
+                    <li><a href="/auth/register" class="text-slate-400 hover:text-amber-400 transition-colors">Join the Community</a></li>
+                    <li><a href="/auth/login" class="text-slate-400 hover:text-amber-400 transition-colors">Log In</a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+
+        <div class="border-t border-slate-800 mt-8 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p class="text-sm text-slate-500">&copy; <%= new Date().getFullYear() %> <%= locals.siteName || 'The Overland Post' %>. Built with coffee and campfire smoke.</p>
+            <p class="text-xs text-slate-600">Self-hosted on a Raspberry Pi. Powered by the open road.</p>
+        </div>
+    </div>
+</footer>

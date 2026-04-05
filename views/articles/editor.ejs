@@ -1,0 +1,89 @@
+<%- include('../layouts/main') %>
+
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <h1 class="text-3xl font-display font-bold text-slate-100 mb-8"><%= article ? 'Edit Article' : 'New Article' %></h1>
+
+    <% if (errors && errors.length > 0) { %>
+    <div class="bg-red-900/30 border border-red-800 rounded-lg p-3 mb-6">
+        <% errors.forEach(err => { %><p class="text-sm text-red-300"><%= err %></p><% }) %>
+    </div>
+    <% } %>
+
+    <form method="POST" action="<%= article && article.id ? '/articles/' + article.slug + '/edit' : '/articles' %>" enctype="multipart/form-data" class="space-y-6">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <div>
+            <label for="title" class="block text-sm font-medium text-slate-300 mb-1">Title</label>
+            <input type="text" id="title" name="title" value="<%= article ? article.title : '' %>" required minlength="3"
+                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 font-display"
+                placeholder="Your article title">
+        </div>
+
+        <div>
+            <label for="summary" class="block text-sm font-medium text-slate-300 mb-1">Summary</label>
+            <textarea id="summary" name="summary" rows="2" maxlength="300"
+                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                placeholder="Brief summary for listings and SEO..."><%= article ? (article.summary || '') : '' %></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label for="category" class="block text-sm font-medium text-slate-300 mb-1">Category</label>
+                <select id="category" name="category" required
+                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+                    <option value="">Select category...</option>
+                    <% categories.forEach(cat => { %>
+                    <option value="<%= cat %>" <%= article && article.category === cat ? 'selected' : '' %> class="capitalize"><%= cat === 'tips' ? 'Tips & Tricks' : cat === 'gear' ? 'Gear Reviews' : cat.charAt(0).toUpperCase() + cat.slice(1) %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div>
+                <label for="tags" class="block text-sm font-medium text-slate-300 mb-1">Tags</label>
+                <input type="text" id="tags" name="tags" value="<%= article ? (article.tags || '') : '' %>"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                    placeholder="portugal, coastal, scenic (comma-separated)">
+            </div>
+        </div>
+
+        <div>
+            <label for="cover_image" class="block text-sm font-medium text-slate-300 mb-1">Cover Image</label>
+            <% if (article && article.cover_image) { %>
+            <div class="mb-2">
+                <img src="<%= article.cover_image %>" alt="" class="h-32 rounded-lg object-cover">
+            </div>
+            <% } %>
+            <input type="file" id="cover_image" name="cover_image" accept="image/jpeg,image/png,image/webp"
+                class="text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-slate-700 file:text-slate-200 hover:file:bg-slate-600">
+            <p class="text-xs text-slate-500 mt-1">Recommended: 1200x630px. Max 5MB.</p>
+        </div>
+
+        <!-- Markdown Editor -->
+        <div>
+            <label for="content" class="block text-sm font-medium text-slate-300 mb-1">Content (Markdown)</label>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div>
+                    <textarea id="content" name="content" rows="20" required
+                        class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 font-mono text-sm"
+                        placeholder="Write your article in Markdown..."><%= article ? (article.content || '') : '' %></textarea>
+                </div>
+                <div>
+                    <div id="preview" class="bg-slate-800/50 border border-slate-700 rounded-lg p-4 h-full overflow-y-auto prose prose-invert prose-amber prose-sm max-w-none">
+                        <p class="text-slate-500 italic">Preview will appear here...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button type="submit" name="status" value="published" class="bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold px-6 py-2.5 rounded-lg transition-colors">
+                <%= article && article.status === 'published' ? 'Update' : 'Publish' %>
+            </button>
+            <button type="submit" name="status" value="draft" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold px-6 py-2.5 rounded-lg transition-colors">
+                Save Draft
+            </button>
+            <a href="/articles" class="text-sm text-slate-400 hover:text-white ml-2">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<%- include('../layouts/end') %>

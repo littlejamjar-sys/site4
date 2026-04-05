@@ -1,0 +1,54 @@
+<%- include('../layouts/main') %>
+
+<div class="max-w-3xl mx-auto px-4 py-8">
+    <div class="flex items-center gap-2 text-sm text-slate-400 mb-6">
+        <a href="/forum" class="hover:text-amber-400">Forum</a>
+        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        <span class="text-slate-200">New Discussion</span>
+    </div>
+
+    <h1 class="text-3xl font-display font-bold text-slate-100 mb-8">Start a Discussion</h1>
+
+    <% if (errors && errors.length > 0) { %>
+    <div class="bg-red-900/30 border border-red-800 rounded-lg p-3 mb-6">
+        <% errors.forEach(err => { %><p class="text-sm text-red-300"><%= err %></p><% }) %>
+    </div>
+    <% } %>
+
+    <form method="POST" action="/forum" class="space-y-6">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <div>
+            <label for="category" class="block text-sm font-medium text-slate-300 mb-1">Category</label>
+            <select id="category" name="category" required
+                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+                <option value="">Select a category...</option>
+                <% categories.forEach(cat => { %>
+                <option value="<%= cat.slug %>" <%= post && post.category === cat.slug ? 'selected' : '' %>><%= cat.name %></option>
+                <% }) %>
+            </select>
+        </div>
+
+        <div>
+            <label for="title" class="block text-sm font-medium text-slate-300 mb-1">Title</label>
+            <input type="text" id="title" name="title" value="<%= post ? post.title : '' %>" required minlength="3"
+                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 font-display"
+                placeholder="What's on your mind?">
+        </div>
+
+        <div>
+            <label for="content" class="block text-sm font-medium text-slate-300 mb-1">Content (Markdown supported)</label>
+            <textarea id="content" name="content" rows="10" required
+                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                placeholder="Share your thoughts, questions, or experiences..."><%= post ? post.content : '' %></textarea>
+            <p class="text-xs text-slate-500 mt-1">Supports Markdown: **bold**, *italic*, [links](url), `code`, lists, and more.</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button type="submit" class="bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold px-6 py-2.5 rounded-lg transition-colors">Post Discussion</button>
+            <a href="/forum" class="text-sm text-slate-400 hover:text-white">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<%- include('../layouts/end') %>

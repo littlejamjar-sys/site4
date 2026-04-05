@@ -1,0 +1,40 @@
+<%- include('../layouts/main') %>
+
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-3xl font-display font-bold text-slate-100">Forum</h1>
+            <p class="text-slate-400 mt-1">Discussions, questions, and community chat.</p>
+        </div>
+        <% if (isAuthenticated) { %>
+        <a href="/forum/new" class="bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4"></i> New Post
+        </a>
+        <% } %>
+    </div>
+
+    <div class="space-y-3">
+        <% categories.forEach(cat => { %>
+        <a href="/forum/<%= cat.slug %>" class="block bg-slate-800/50 border border-slate-700 rounded-xl p-5 hover:border-slate-600 transition-colors group">
+            <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-lg bg-forest-900/50 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="<%= cat.icon %>" class="w-5 h-5 text-forest-400"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h2 class="font-display font-semibold text-slate-100 group-hover:text-amber-400 transition-colors"><%= cat.name %></h2>
+                    <p class="text-sm text-slate-400 mt-0.5"><%= cat.description %></p>
+                </div>
+                <div class="text-right flex-shrink-0 hidden sm:block">
+                    <p class="text-sm font-semibold text-slate-300"><%= helpers.formatNumber(cat.postCount) %></p>
+                    <p class="text-xs text-slate-500"><%= helpers.pluralize(cat.postCount, 'post') %></p>
+                    <% if (cat.latestPost) { %>
+                    <p class="text-xs text-slate-600 mt-1"><%= helpers.formatDate(cat.latestPost, 'relative') %></p>
+                    <% } %>
+                </div>
+            </div>
+        </a>
+        <% }) %>
+    </div>
+</div>
+
+<%- include('../layouts/end') %>

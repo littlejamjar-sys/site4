@@ -1,0 +1,54 @@
+<%- include('../layouts/main') %>
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-display font-bold text-slate-100">Routes & Road Trips</h1>
+            <p class="text-slate-400 mt-1">Curated overland routes from the community</p>
+        </div>
+        <% if (isAuthenticated) { %>
+        <a href="/routes/submit" class="bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold px-5 py-2.5 rounded-lg transition-colors flex items-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4"></i> Submit Route
+        </a>
+        <% } %>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex flex-wrap gap-2 mb-4">
+        <a href="/routes" class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors <%= !currentDifficulty ? 'bg-amber-500 text-slate-900' : 'bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700' %>">All Difficulties</a>
+        <% difficulties.forEach(d => { %>
+        <a href="/routes?difficulty=<%= d %><%= currentCountry ? '&country=' + encodeURIComponent(currentCountry) : '' %>" class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors capitalize <%= currentDifficulty === d ? 'bg-amber-500 text-slate-900' : 'bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700' %>"><%= d %></a>
+        <% }) %>
+    </div>
+
+    <% if (countries.length > 0) { %>
+    <div class="flex flex-wrap gap-2 mb-8">
+        <a href="/routes<%= currentDifficulty ? '?difficulty=' + currentDifficulty : '' %>" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors <%= !currentCountry ? 'bg-forest-700 text-forest-100' : 'bg-slate-800/50 border border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700' %>">All Countries</a>
+        <% countries.forEach(c => { %>
+        <a href="/routes?country=<%= encodeURIComponent(c) %><%= currentDifficulty ? '&difficulty=' + currentDifficulty : '' %>" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors <%= currentCountry === c ? 'bg-forest-700 text-forest-100' : 'bg-slate-800/50 border border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700' %>"><%= c %></a>
+        <% }) %>
+    </div>
+    <% } %>
+
+    <!-- Results -->
+    <p class="text-sm text-slate-500 mb-4"><%= helpers.formatNumber(pagination.totalItems) %> routes found</p>
+
+    <% if (routes.length > 0) { %>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% routes.forEach(route => { %>
+            <%- include('../partials/route-card', { route }) %>
+        <% }) %>
+    </div>
+
+    <%- include('../partials/pagination') %>
+    <% } else { %>
+    <div class="text-center py-16">
+        <i data-lucide="map" class="w-16 h-16 text-slate-700 mx-auto mb-4"></i>
+        <h2 class="text-xl font-display font-semibold text-slate-400 mb-2">No routes yet</h2>
+        <p class="text-slate-500">Be the first to <a href="/routes/submit" class="text-amber-400 hover:text-amber-300">share a route</a>.</p>
+    </div>
+    <% } %>
+</div>
+
+<%- include('../layouts/end') %>

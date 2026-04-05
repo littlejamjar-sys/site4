@@ -1,0 +1,60 @@
+<%- include('../layouts/main') %>
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-display font-bold text-slate-100">Campsites & Wild Spots</h1>
+            <p class="text-slate-400 mt-1">Community-sourced overnight spots across Europe</p>
+        </div>
+        <% if (isAuthenticated) { %>
+        <a href="/campsites/submit" class="bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold px-5 py-2.5 rounded-lg transition-colors flex items-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4"></i> Add a Spot
+        </a>
+        <% } %>
+    </div>
+
+    <!-- Map -->
+    <div class="bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden mb-8">
+        <div id="campsites-map" class="h-96 w-full" data-mode="campsites"></div>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex flex-wrap gap-2 mb-6">
+        <a href="/campsites" class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors <%= !currentType ? 'bg-amber-500 text-slate-900' : 'bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700' %>">All Types</a>
+        <% types.forEach(t => { %>
+        <a href="/campsites?type=<%= t %><%= currentCountry ? '&country=' + encodeURIComponent(currentCountry) : '' %>" class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors capitalize <%= currentType === t ? 'bg-amber-500 text-slate-900' : 'bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700' %>"><%= helpers.campsiteTypeLabel(t) %></a>
+        <% }) %>
+    </div>
+
+    <% if (countries.length > 0) { %>
+    <div class="flex flex-wrap gap-2 mb-8">
+        <a href="/campsites<%= currentType ? '?type=' + currentType : '' %>" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors <%= !currentCountry ? 'bg-forest-700 text-forest-100' : 'bg-slate-800/50 border border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700' %>">All Countries</a>
+        <% countries.forEach(c => { %>
+        <a href="/campsites?country=<%= encodeURIComponent(c) %><%= currentType ? '&type=' + currentType : '' %>" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors <%= currentCountry === c ? 'bg-forest-700 text-forest-100' : 'bg-slate-800/50 border border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700' %>"><%= c %></a>
+        <% }) %>
+    </div>
+    <% } %>
+
+    <!-- Results count -->
+    <p class="text-sm text-slate-500 mb-4"><%= helpers.formatNumber(pagination.totalItems) %> spots found</p>
+
+    <!-- Grid -->
+    <% if (campsites.length > 0) { %>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <% campsites.forEach(campsite => { %>
+            <%- include('../partials/campsite-card', { campsite }) %>
+        <% }) %>
+    </div>
+
+    <%- include('../partials/pagination') %>
+    <% } else { %>
+    <div class="text-center py-16">
+        <i data-lucide="map-pin-off" class="w-16 h-16 text-slate-700 mx-auto mb-4"></i>
+        <h2 class="text-xl font-display font-semibold text-slate-400 mb-2">No spots found</h2>
+        <p class="text-slate-500">Try adjusting your filters or <a href="/campsites/submit" class="text-amber-400 hover:text-amber-300">add the first one</a>.</p>
+    </div>
+    <% } %>
+</div>
+
+<%- include('../layouts/end') %>

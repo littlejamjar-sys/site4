@@ -1,0 +1,97 @@
+<%- include('../layouts/main') %>
+
+<article class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Cover Image -->
+    <% if (article.cover_image) { %>
+    <div class="aspect-video rounded-xl overflow-hidden mb-8">
+        <img src="<%= article.cover_image %>" alt="<%= article.title %>" class="w-full h-full object-cover">
+    </div>
+    <% } %>
+
+    <!-- Meta -->
+    <div class="flex flex-wrap items-center gap-3 mb-4">
+        <span class="text-xs font-medium px-3 py-1 rounded-full bg-forest-900/50 text-forest-400 capitalize"><%= article.category === 'tips' ? 'Tips & Tricks' : article.category === 'gear' ? 'Gear Reviews' : article.category %></span>
+        <% if (article.featured) { %>
+        <span class="text-xs font-medium px-3 py-1 rounded-full bg-amber-900/50 text-amber-400">Featured</span>
+        <% } %>
+        <% if (article.status === 'draft') { %>
+        <span class="text-xs font-medium px-3 py-1 rounded-full bg-red-900/50 text-red-400">Draft</span>
+        <% } %>
+        <span class="text-sm text-slate-500"><%= helpers.formatDate(article.published_at || article.created_at, 'long') %></span>
+        <span class="text-sm text-slate-500 flex items-center gap-1"><i data-lucide="eye" class="w-4 h-4"></i> <%= helpers.formatNumber(article.view_count) %></span>
+    </div>
+
+    <!-- Title -->
+    <h1 class="text-3xl md:text-4xl font-display font-bold text-slate-100 mb-4 leading-tight"><%= article.title %></h1>
+
+    <% if (article.summary) { %>
+    <p class="text-lg text-slate-400 mb-6 leading-relaxed"><%= article.summary %></p>
+    <% } %>
+
+    <!-- Author -->
+    <div class="flex items-center gap-3 mb-8 pb-8 border-b border-slate-800">
+        <a href="/auth/user/<%= article.username %>">
+            <% if (article.avatar_path) { %>
+            <img src="<%= article.avatar_path %>" alt="" class="w-10 h-10 rounded-full object-cover">
+            <% } else { %>
+            <div class="w-10 h-10 rounded-full bg-forest-700 flex items-center justify-center text-sm font-bold text-forest-100"><%= article.username.charAt(0).toUpperCase() %></div>
+            <% } %>
+        </a>
+        <div>
+            <a href="/auth/user/<%= article.username %>" class="font-semibold text-slate-200 hover:text-amber-400 transition-colors"><%= article.display_name || article.username %></a>
+            <% if (article.bio) { %>
+            <p class="text-sm text-slate-500 line-clamp-1"><%= article.bio %></p>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="prose prose-invert prose-amber max-w-none
+        prose-headings:font-display prose-headings:text-slate-100
+        prose-p:text-slate-300 prose-p:leading-relaxed
+        prose-a:text-amber-400 prose-a:no-underline hover:prose-a:text-amber-300
+        prose-strong:text-slate-200
+        prose-code:text-amber-300 prose-code:bg-slate-800 prose-code:px-1 prose-code:rounded
+        prose-pre:bg-slate-800 prose-pre:border prose-pre:border-slate-700
+        prose-img:rounded-xl
+        prose-blockquote:border-amber-500 prose-blockquote:text-slate-400">
+        <%- article.contentHtml %>
+    </div>
+
+    <!-- Tags -->
+    <% if (article.tags) { %>
+    <div class="flex flex-wrap items-center gap-2 mt-8 pt-8 border-t border-slate-800">
+        <i data-lucide="tag" class="w-4 h-4 text-slate-500"></i>
+        <% article.tags.split(',').map(t => t.trim()).filter(Boolean).forEach(tag => { %>
+        <a href="/search?q=<%= encodeURIComponent(tag) %>&type=articles" class="text-xs px-2 py-1 rounded-full bg-slate-800 text-slate-400 hover:text-amber-400 border border-slate-700"><%= tag %></a>
+        <% }) %>
+    </div>
+    <% } %>
+
+    <!-- Edit/Delete (author or admin) -->
+    <% if (isAuthenticated && (currentUser.id === article.author_id || currentUser.role === 'admin')) { %>
+    <div class="flex items-center gap-3 mt-6 pt-6 border-t border-slate-800">
+        <a href="/articles/<%= article.slug %>/edit" class="text-sm text-slate-400 hover:text-amber-400 flex items-center gap-1"><i data-lucide="edit" class="w-4 h-4"></i> Edit</a>
+        <% if (currentUser.role === 'admin') { %>
+        <form method="POST" action="/articles/<%= article.slug %>/delete" onsubmit="return confirm('Delete this article?')">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" class="text-sm text-red-400 hover:text-red-300 flex items-center gap-1"><i data-lucide="trash-2" class="w-4 h-4"></i> Delete</button>
+        </form>
+        <% } %>
+    </div>
+    <% } %>
+</article>
+
+<!-- Related Articles -->
+<% if (related.length > 0) { %>
+<section class="max-w-7xl mx-auto px-4 py-12 border-t border-slate-800">
+    <h2 class="text-xl font-display font-bold text-slate-200 mb-6">More in <span class="capitalize"><%= article.category %></span></h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <% related.forEach(article => { %>
+        <%- include('../partials/article-card', { article }) %>
+        <% }) %>
+    </div>
+</section>
+<% } %>
+
+<%- include('../layouts/end') %>

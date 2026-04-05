@@ -1,0 +1,195 @@
+<%- include('../layouts/main') %>
+
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2 text-sm text-slate-400 mb-6">
+        <a href="/builds" class="hover:text-amber-400">Builds</a>
+        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        <span class="text-slate-200 truncate"><%= build.title %></span>
+    </div>
+
+    <!-- Cover -->
+    <% if (build.cover_image) { %>
+    <div class="aspect-[21/9] rounded-xl overflow-hidden mb-6 bg-slate-800">
+        <img src="<%= build.cover_image %>" alt="<%= build.title %>" class="w-full h-full object-cover">
+    </div>
+    <% } %>
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+        <div>
+            <div class="flex items-center gap-2 mb-2">
+                <% if (build.status === 'complete') { %>
+                <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-forest-900/50 text-forest-400">Complete</span>
+                <% } else if (build.status === 'in-progress') { %>
+                <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-amber-900/50 text-amber-400">In Progress</span>
+                <% } else { %>
+                <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-slate-700 text-slate-400 capitalize"><%= build.status %></span>
+                <% } %>
+            </div>
+            <h1 class="text-3xl font-display font-bold text-slate-100 mb-1"><%= build.title %></h1>
+            <% if (build.base_vehicle) { %>
+            <p class="text-lg text-slate-400"><%= build.base_vehicle %><% if (build.year) { %> (<%= build.year %>)<% } %></p>
+            <% } %>
+        </div>
+        <% if (isOwner) { %>
+        <div class="flex items-center gap-2">
+            <a href="/builds/<%= build.slug %>/edit" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-2">
+                <i data-lucide="edit-3" class="w-4 h-4"></i> Edit
+            </a>
+            <form method="POST" action="/builds/<%= build.slug %>/delete" onsubmit="return confirm('Delete this build and all entries?')">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="bg-red-900/50 hover:bg-red-900 border border-red-800 text-red-400 hover:text-red-200 px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-2">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i> Delete
+                </button>
+            </form>
+        </div>
+        <% } %>
+    </div>
+
+    <!-- Owner & stats -->
+    <div class="flex items-center gap-4 mb-6 pb-6 border-b border-slate-700">
+        <a href="/auth/user/<%= build.username %>" class="flex items-center gap-2">
+            <% if (build.avatar_path) { %>
+            <img src="<%= build.avatar_path %>" alt="" class="w-8 h-8 rounded-full object-cover">
+            <% } else { %>
+            <div class="w-8 h-8 rounded-full bg-forest-700 flex items-center justify-center text-sm font-bold text-forest-100"><%= build.username.charAt(0).toUpperCase() %></div>
+            <% } %>
+            <span class="text-sm font-semibold text-slate-200 hover:text-amber-400"><%= build.display_name || build.username %></span>
+        </a>
+        <span class="text-xs text-slate-500">Started <%= helpers.formatDate(build.created_at) %></span>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="grid grid-cols-3 gap-4 mb-8">
+        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4 text-center">
+            <p class="text-xs text-slate-500 uppercase tracking-wider mb-1">Entries</p>
+            <p class="text-xl font-display font-bold text-slate-100"><%= entries.length %></p>
+        </div>
+        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4 text-center">
+            <p class="text-xs text-slate-500 uppercase tracking-wider mb-1">Total Cost</p>
+            <p class="text-xl font-display font-bold text-amber-400"><%= helpers.formatCurrency(build.total_cost || entryTotals.total_cost, build.currency) %></p>
+        </div>
+        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4 text-center">
+            <p class="text-xs text-slate-500 uppercase tracking-wider mb-1">Hours</p>
+            <p class="text-xl font-display font-bold text-slate-100"><%= entryTotals.total_hours ? helpers.formatNumber(Math.round(entryTotals.total_hours)) : '—' %></p>
+        </div>
+    </div>
+
+    <!-- Description -->
+    <% if (build.description) { %>
+    <div class="mb-8 pb-8 border-b border-slate-700">
+        <p class="text-slate-300 whitespace-pre-wrap"><%= build.description %></p>
+    </div>
+    <% } %>
+
+    <!-- Build photos (not tied to entries) -->
+    <% if (photos.length > 0) { %>
+    <div class="mb-8">
+        <h2 class="text-lg font-display font-semibold text-slate-200 mb-4">Photos</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <% photos.forEach(photo => { %>
+            <div class="aspect-video rounded-lg overflow-hidden bg-slate-800">
+                <img src="<%= photo.file_path %>" alt="<%= photo.caption || build.title %>" class="w-full h-full object-cover" loading="lazy">
+            </div>
+            <% }) %>
+        </div>
+    </div>
+    <% } %>
+
+    <!-- Build Entries -->
+    <div class="mb-8">
+        <h2 class="text-lg font-display font-semibold text-slate-200 mb-6">Build Log</h2>
+
+        <% if (entries.length > 0) { %>
+        <div class="space-y-6">
+            <% entries.forEach((entry, index) => { %>
+            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 relative" id="entry-<%= entry.id %>">
+                <!-- Entry number -->
+                <div class="absolute -left-3 top-6 w-6 h-6 rounded-full bg-amber-500 text-slate-900 text-xs font-bold flex items-center justify-center"><%= index + 1 %></div>
+
+                <h3 class="text-lg font-display font-semibold text-slate-100 mb-2"><%= entry.title %></h3>
+
+                <% if (entry.cost || entry.hours_spent) { %>
+                <div class="flex items-center gap-4 mb-3 text-sm text-slate-400">
+                    <% if (entry.cost) { %>
+                    <span class="flex items-center gap-1"><i data-lucide="banknote" class="w-4 h-4"></i> <%= helpers.formatCurrency(entry.cost, build.currency) %></span>
+                    <% } %>
+                    <% if (entry.hours_spent) { %>
+                    <span class="flex items-center gap-1"><i data-lucide="clock" class="w-4 h-4"></i> <%= entry.hours_spent %>h</span>
+                    <% } %>
+                </div>
+                <% } %>
+
+                <div class="prose prose-invert prose-amber prose-sm max-w-none prose-p:text-slate-300">
+                    <%- entry.contentHtml %>
+                </div>
+
+                <% if (entry.photos && entry.photos.length > 0) { %>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-4">
+                    <% entry.photos.forEach(photo => { %>
+                    <div class="aspect-video rounded-lg overflow-hidden bg-slate-800">
+                        <img src="<%= photo.file_path %>" alt="<%= photo.caption || entry.title %>" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <% }) %>
+                </div>
+                <% } %>
+
+                <p class="text-xs text-slate-600 mt-3"><%= helpers.formatDate(entry.created_at, 'relative') %></p>
+            </div>
+            <% }) %>
+        </div>
+        <% } else { %>
+        <p class="text-sm text-slate-500">No entries yet.</p>
+        <% } %>
+    </div>
+
+    <!-- Add Entry Form (owner only) -->
+    <% if (isOwner) { %>
+    <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6" id="add-entry">
+        <h3 class="font-display font-semibold text-slate-200 mb-4">Add an Entry</h3>
+        <form method="POST" action="/builds/<%= build.slug %>/entry" enctype="multipart/form-data" class="space-y-4">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+            <div>
+                <label for="entry-title" class="block text-sm font-medium text-slate-300 mb-1">Entry Title *</label>
+                <input type="text" name="title" id="entry-title" required
+                    class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                    placeholder="e.g. Insulating the walls">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="entry-cost" class="block text-sm font-medium text-slate-300 mb-1">Cost</label>
+                    <input type="number" name="cost" id="entry-cost" step="0.01" min="0"
+                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                        placeholder="150.00">
+                </div>
+                <div>
+                    <label for="entry-hours" class="block text-sm font-medium text-slate-300 mb-1">Hours Spent</label>
+                    <input type="number" name="hours_spent" id="entry-hours" step="0.5" min="0"
+                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                        placeholder="8">
+                </div>
+            </div>
+
+            <div>
+                <label for="entry-content" class="block text-sm font-medium text-slate-300 mb-1">Details * <span class="text-slate-500 font-normal">(Markdown supported)</span></label>
+                <textarea name="content" id="entry-content" rows="6" required
+                    class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                    placeholder="Describe what you did, materials used, lessons learned..."></textarea>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">Photos <span class="text-slate-500 font-normal">(up to 5)</span></label>
+                <input type="file" name="photos" accept="image/jpeg,image/png,image/webp" multiple
+                    class="block w-full text-sm text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-slate-700 file:text-slate-200 hover:file:bg-slate-600 file:cursor-pointer">
+            </div>
+
+            <button type="submit" class="bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold px-6 py-2.5 rounded-lg transition-colors">Add Entry</button>
+        </form>
+    </div>
+    <% } %>
+</div>
+
+<%- include('../layouts/end') %>

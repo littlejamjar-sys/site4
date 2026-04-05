@@ -1,0 +1,37 @@
+<% if (typeof article !== 'undefined' && article) { %>
+<a href="/articles/<%= article.slug %>" class="group block bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden hover:border-slate-600 transition-all hover:shadow-lg hover:shadow-slate-900/50">
+    <% if (article.cover_image) { %>
+    <div class="aspect-video overflow-hidden">
+        <img src="<%= article.cover_image %>" alt="<%= article.title %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+    </div>
+    <% } else { %>
+    <div class="aspect-video bg-gradient-to-br from-forest-900 to-slate-800 flex items-center justify-center">
+        <i data-lucide="newspaper" class="w-12 h-12 text-slate-600"></i>
+    </div>
+    <% } %>
+    <div class="p-4">
+        <div class="flex items-center gap-2 mb-2">
+            <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-forest-900/50 text-forest-400 capitalize"><%= article.category %></span>
+            <% if (article.featured) { %>
+            <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-amber-900/50 text-amber-400">Featured</span>
+            <% } %>
+        </div>
+        <h3 class="font-display font-semibold text-slate-100 group-hover:text-amber-400 transition-colors line-clamp-2 mb-2"><%= article.title %></h3>
+        <% if (article.summary) { %>
+        <p class="text-sm text-slate-400 line-clamp-2 mb-3"><%= article.summary %></p>
+        <% } %>
+        <div class="flex items-center justify-between text-xs text-slate-500">
+            <div class="flex items-center gap-1.5">
+                <% if (article.avatar_path) { %>
+                <img src="<%= article.avatar_path %>" alt="" class="w-5 h-5 rounded-full object-cover">
+                <% } %>
+                <span><%= article.display_name || article.username || 'Unknown' %></span>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="flex items-center gap-1"><i data-lucide="eye" class="w-3.5 h-3.5"></i> <%= helpers.formatNumber(article.view_count) %></span>
+                <span><%= helpers.formatDate(article.published_at || article.created_at, 'short') %></span>
+            </div>
+        </div>
+    </div>
+</a>
+<% } %>

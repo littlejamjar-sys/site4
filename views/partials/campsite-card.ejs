@@ -1,0 +1,55 @@
+<% if (typeof campsite !== 'undefined' && campsite) { %>
+<a href="/campsites/<%= campsite.id %>" class="group block bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden hover:border-slate-600 transition-all hover:shadow-lg hover:shadow-slate-900/50">
+    <div class="p-4">
+        <div class="flex items-start justify-between mb-2">
+            <div class="flex-1 min-w-0">
+                <h3 class="font-display font-semibold text-slate-100 group-hover:text-amber-400 transition-colors truncate"><%= campsite.name %></h3>
+                <p class="text-xs text-slate-500 mt-0.5">
+                    <% if (campsite.region) { %><%= campsite.region %>, <% } %><%= campsite.country || 'Unknown' %>
+                </p>
+            </div>
+            <% if (campsite.cost_per_night === null || campsite.cost_per_night === 0) { %>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-forest-900/50 text-forest-400">Free</span>
+            <% } else { %>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-900/50 text-amber-400"><%= helpers.formatCurrency(campsite.cost_per_night, campsite.currency) %>/n</span>
+            <% } %>
+        </div>
+
+        <% if (campsite.description) { %>
+        <p class="text-sm text-slate-400 line-clamp-2 mb-3"><%= helpers.truncate(campsite.description, 100) %></p>
+        <% } %>
+
+        <!-- Type badge -->
+        <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 capitalize"><%= helpers.campsiteTypeLabel(campsite.type) %></span>
+            <% if (campsite.verified) { %>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-forest-900/50 text-forest-400 flex items-center gap-1"><i data-lucide="badge-check" class="w-3 h-3"></i> Verified</span>
+            <% } %>
+        </div>
+
+        <!-- Amenities -->
+        <div class="flex items-center gap-2 flex-wrap mb-3">
+            <% const amenities = ['has_water', 'has_electric', 'has_toilet', 'has_shower', 'has_wifi', 'dog_friendly']; %>
+            <% amenities.forEach(a => { %>
+                <% if (campsite[a]) { %>
+                <span class="text-xs text-slate-400 flex items-center gap-1" title="<%= helpers.amenityName(a) %>">
+                    <i data-lucide="<%= helpers.amenityIcon(a) %>" class="w-3.5 h-3.5 text-forest-400"></i>
+                </span>
+                <% } %>
+            <% }) %>
+        </div>
+
+        <!-- Rating -->
+        <div class="flex items-center justify-between text-xs text-slate-500">
+            <% if (campsite.rating_count > 0) { %>
+            <div class="flex items-center gap-1">
+                <%- helpers.starRating(campsite.rating_avg) %>
+                <span class="ml-1">(<%= campsite.rating_count %>)</span>
+            </div>
+            <% } else { %>
+            <span class="text-slate-600">No reviews yet</span>
+            <% } %>
+        </div>
+    </div>
+</a>
+<% } %>

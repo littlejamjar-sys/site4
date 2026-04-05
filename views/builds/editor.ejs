@@ -1,0 +1,117 @@
+<%- include('../layouts/main') %>
+
+<div class="max-w-3xl mx-auto px-4 py-8">
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2 text-sm text-slate-400 mb-6">
+        <a href="/builds" class="hover:text-amber-400">Builds</a>
+        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        <span class="text-slate-200"><%= build ? 'Edit Build' : 'Start a Build Log' %></span>
+    </div>
+
+    <h1 class="text-2xl font-display font-bold text-slate-100 mb-6"><%= build ? 'Edit Build' : 'Start a Build Log' %></h1>
+
+    <% if (errors && errors.length > 0) { %>
+    <div class="bg-red-900/50 border border-red-700 text-red-200 px-4 py-3 rounded-lg mb-6">
+        <ul class="list-disc list-inside text-sm space-y-1">
+            <% errors.forEach(err => { %>
+            <li><%= err %></li>
+            <% }) %>
+        </ul>
+    </div>
+    <% } %>
+
+    <form method="POST" action="<%= build ? '/builds/' + build.slug + '/edit' : '/builds' %>" enctype="multipart/form-data" class="space-y-6">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <!-- Title -->
+        <div>
+            <label for="title" class="block text-sm font-medium text-slate-300 mb-1">Build Title *</label>
+            <input type="text" name="title" id="title" required minlength="3"
+                value="<%= build ? build.title : '' %>"
+                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                placeholder="e.g. The Big Green Machine">
+        </div>
+
+        <!-- Base Vehicle & Year -->
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label for="base_vehicle" class="block text-sm font-medium text-slate-300 mb-1">Base Vehicle</label>
+                <input type="text" name="base_vehicle" id="base_vehicle"
+                    value="<%= build ? build.base_vehicle : '' %>"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                    placeholder="e.g. VW Crafter LWB">
+            </div>
+            <div>
+                <label for="year" class="block text-sm font-medium text-slate-300 mb-1">Year</label>
+                <input type="number" name="year" id="year" min="1960" max="2030"
+                    value="<%= build ? build.year : '' %>"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                    placeholder="2019">
+            </div>
+        </div>
+
+        <!-- Status -->
+        <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1">Build Status</label>
+            <div class="flex flex-wrap gap-2">
+                <% statuses.forEach(s => { %>
+                <label class="cursor-pointer">
+                    <input type="radio" name="status" value="<%= s %>" class="sr-only peer"
+                        <%= (build && build.status === s) || (!build && s === 'in-progress') ? 'checked' : '' %>>
+                    <div class="px-4 py-2 rounded-lg border text-sm font-medium transition-colors capitalize
+                        peer-checked:bg-amber-500 peer-checked:text-slate-900 peer-checked:border-amber-500
+                        bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-600">
+                        <%= s.replace('-', ' ') %>
+                    </div>
+                </label>
+                <% }) %>
+            </div>
+        </div>
+
+        <!-- Cost & Currency -->
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label for="total_cost" class="block text-sm font-medium text-slate-300 mb-1">Total Cost <span class="text-slate-500 font-normal">(optional, or tracked via entries)</span></label>
+                <input type="number" name="total_cost" id="total_cost" step="0.01" min="0"
+                    value="<%= build ? build.total_cost : '' %>"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                    placeholder="5000.00">
+            </div>
+            <div>
+                <label for="currency" class="block text-sm font-medium text-slate-300 mb-1">Currency</label>
+                <select name="currency" id="currency"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+                    <option value="EUR" <%= build && build.currency === 'EUR' ? 'selected' : '' %>>EUR</option>
+                    <option value="GBP" <%= build && build.currency === 'GBP' ? 'selected' : '' %>>GBP</option>
+                    <option value="USD" <%= build && build.currency === 'USD' ? 'selected' : '' %>>USD</option>
+                    <option value="CHF" <%= build && build.currency === 'CHF' ? 'selected' : '' %>>CHF</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Cover Image -->
+        <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1">Cover Image</label>
+            <% if (build && build.cover_image) { %>
+            <div class="mb-2">
+                <img src="<%= build.cover_image %>" alt="" class="h-32 w-auto rounded-lg object-cover">
+                <p class="text-xs text-slate-500 mt-1">Upload a new image to replace the current one.</p>
+            </div>
+            <% } %>
+            <input type="file" name="cover_image" accept="image/jpeg,image/png,image/webp"
+                class="block w-full text-sm text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-slate-700 file:text-slate-200 hover:file:bg-slate-600 file:cursor-pointer">
+        </div>
+
+        <!-- Description -->
+        <div>
+            <label for="description" class="block text-sm font-medium text-slate-300 mb-1">Description</label>
+            <textarea name="description" id="description" rows="4"
+                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                placeholder="Tell the story of your build — what inspired it, your goals, the plan..."><%= build ? build.description : '' %></textarea>
+        </div>
+
+        <button type="submit" class="bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold px-8 py-3 rounded-lg transition-colors text-lg"><%= build ? 'Update Build' : 'Create Build' %></button>
+    </form>
+</div>
+
+<%- include('../layouts/end') %>

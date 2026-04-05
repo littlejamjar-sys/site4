@@ -1,0 +1,54 @@
+<% if (typeof pagination !== 'undefined' && pagination && pagination.totalPages > 1) { %>
+<nav class="flex items-center justify-center gap-1 mt-8" aria-label="Pagination">
+    <% if (pagination.hasPrev) { %>
+    <a href="?<%= typeof paginationQuery !== 'undefined' ? paginationQuery + '&' : '' %>page=<%= pagination.prevPage %>" class="px-3 py-2 text-sm rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors flex items-center gap-1">
+        <i data-lucide="chevron-left" class="w-4 h-4"></i> Prev
+    </a>
+    <% } else { %>
+    <span class="px-3 py-2 text-sm rounded-lg bg-slate-800/50 border border-slate-700/50 text-slate-600 flex items-center gap-1">
+        <i data-lucide="chevron-left" class="w-4 h-4"></i> Prev
+    </span>
+    <% } %>
+
+    <%
+    const maxVisible = 5;
+    let startPage = Math.max(1, pagination.page - Math.floor(maxVisible / 2));
+    let endPage = Math.min(pagination.totalPages, startPage + maxVisible - 1);
+    if (endPage - startPage < maxVisible - 1) {
+        startPage = Math.max(1, endPage - maxVisible + 1);
+    }
+    %>
+
+    <% if (startPage > 1) { %>
+    <a href="?<%= typeof paginationQuery !== 'undefined' ? paginationQuery + '&' : '' %>page=1" class="px-3 py-2 text-sm rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors">1</a>
+    <% if (startPage > 2) { %>
+    <span class="px-2 text-slate-600">&hellip;</span>
+    <% } %>
+    <% } %>
+
+    <% for (let p = startPage; p <= endPage; p++) { %>
+    <% if (p === pagination.page) { %>
+    <span class="px-3 py-2 text-sm rounded-lg bg-amber-500 text-slate-900 font-semibold"><%= p %></span>
+    <% } else { %>
+    <a href="?<%= typeof paginationQuery !== 'undefined' ? paginationQuery + '&' : '' %>page=<%= p %>" class="px-3 py-2 text-sm rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"><%= p %></a>
+    <% } %>
+    <% } %>
+
+    <% if (endPage < pagination.totalPages) { %>
+    <% if (endPage < pagination.totalPages - 1) { %>
+    <span class="px-2 text-slate-600">&hellip;</span>
+    <% } %>
+    <a href="?<%= typeof paginationQuery !== 'undefined' ? paginationQuery + '&' : '' %>page=<%= pagination.totalPages %>" class="px-3 py-2 text-sm rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"><%= pagination.totalPages %></a>
+    <% } %>
+
+    <% if (pagination.hasNext) { %>
+    <a href="?<%= typeof paginationQuery !== 'undefined' ? paginationQuery + '&' : '' %>page=<%= pagination.nextPage %>" class="px-3 py-2 text-sm rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors flex items-center gap-1">
+        Next <i data-lucide="chevron-right" class="w-4 h-4"></i>
+    </a>
+    <% } else { %>
+    <span class="px-3 py-2 text-sm rounded-lg bg-slate-800/50 border border-slate-700/50 text-slate-600 flex items-center gap-1">
+        Next <i data-lucide="chevron-right" class="w-4 h-4"></i>
+    </span>
+    <% } %>
+</nav>
+<% } %>

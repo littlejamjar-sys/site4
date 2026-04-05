@@ -1,0 +1,52 @@
+<% if (typeof route !== 'undefined' && route) { %>
+<a href="/routes/<%= route.slug %>" class="group block bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden hover:border-slate-600 transition-all hover:shadow-lg hover:shadow-slate-900/50">
+    <% if (route.cover_image) { %>
+    <div class="aspect-video overflow-hidden">
+        <img src="<%= route.cover_image %>" alt="<%= route.title %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+    </div>
+    <% } else { %>
+    <div class="aspect-video bg-gradient-to-br from-forest-900 to-slate-800 flex items-center justify-center">
+        <i data-lucide="map" class="w-12 h-12 text-slate-600"></i>
+    </div>
+    <% } %>
+    <div class="p-4">
+        <h3 class="font-display font-semibold text-slate-100 group-hover:text-amber-400 transition-colors line-clamp-2 mb-2"><%= route.title %></h3>
+
+        <div class="flex flex-wrap items-center gap-2 mb-3 text-xs">
+            <% if (route.country) { %>
+            <span class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300"><%= route.country %></span>
+            <% } %>
+            <% if (route.difficulty) { %>
+            <span class="px-2 py-0.5 rounded-full <%= helpers.difficultyColor(route.difficulty) %> capitalize"><%= route.difficulty %></span>
+            <% } %>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2 text-center mb-3">
+            <div>
+                <p class="text-xs text-slate-500">Distance</p>
+                <p class="text-sm font-semibold text-slate-200"><%= route.distance_km ? helpers.formatNumber(Math.round(route.distance_km)) + ' km' : '—' %></p>
+            </div>
+            <div>
+                <p class="text-xs text-slate-500">Days</p>
+                <p class="text-sm font-semibold text-slate-200"><%= route.duration_days || '—' %></p>
+            </div>
+            <div>
+                <p class="text-xs text-slate-500">Season</p>
+                <p class="text-sm font-semibold text-slate-200 truncate"><%= route.best_season || '—' %></p>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-slate-500">
+            <% if (route.rating_count > 0) { %>
+            <div class="flex items-center gap-1">
+                <%- helpers.starRating(route.rating_avg) %>
+                <span class="ml-1">(<%= route.rating_count %>)</span>
+            </div>
+            <% } else { %>
+            <span class="text-slate-600">No reviews</span>
+            <% } %>
+            <span class="flex items-center gap-1"><i data-lucide="eye" class="w-3.5 h-3.5"></i> <%= helpers.formatNumber(route.view_count) %></span>
+        </div>
+    </div>
+</a>
+<% } %>

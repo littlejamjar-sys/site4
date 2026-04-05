@@ -1,0 +1,40 @@
+<% if (typeof build !== 'undefined' && build) { %>
+<a href="/builds/<%= build.slug %>" class="group block bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden hover:border-slate-600 transition-all hover:shadow-lg hover:shadow-slate-900/50">
+    <% if (build.cover_image) { %>
+    <div class="aspect-video overflow-hidden">
+        <img src="<%= build.cover_image %>" alt="<%= build.title %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+    </div>
+    <% } else { %>
+    <div class="aspect-video bg-gradient-to-br from-amber-900/30 to-slate-800 flex items-center justify-center">
+        <i data-lucide="wrench" class="w-12 h-12 text-slate-600"></i>
+    </div>
+    <% } %>
+    <div class="p-4">
+        <div class="flex items-center gap-2 mb-2">
+            <% if (build.status === 'complete') { %>
+            <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-forest-900/50 text-forest-400">Complete</span>
+            <% } else if (build.status === 'in-progress') { %>
+            <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-amber-900/50 text-amber-400">In Progress</span>
+            <% } else { %>
+            <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-slate-700 text-slate-400 capitalize"><%= build.status %></span>
+            <% } %>
+        </div>
+        <h3 class="font-display font-semibold text-slate-100 group-hover:text-amber-400 transition-colors line-clamp-2 mb-1"><%= build.title %></h3>
+        <% if (build.base_vehicle) { %>
+        <p class="text-sm text-slate-400 mb-3"><%= build.base_vehicle %><% if (build.year) { %> (<%= build.year %>)<% } %></p>
+        <% } %>
+
+        <div class="flex items-center justify-between text-xs text-slate-500">
+            <div class="flex items-center gap-1.5">
+                <% if (build.avatar_path) { %>
+                <img src="<%= build.avatar_path %>" alt="" class="w-5 h-5 rounded-full object-cover">
+                <% } %>
+                <span><%= build.display_name || build.username || 'Unknown' %></span>
+            </div>
+            <% if (build.total_cost) { %>
+            <span class="font-semibold text-slate-300"><%= helpers.formatCurrency(build.total_cost, build.currency) %></span>
+            <% } %>
+        </div>
+    </div>
+</a>
+<% } %>

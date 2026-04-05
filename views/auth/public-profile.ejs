@@ -1,0 +1,99 @@
+<%- include('../layouts/main') %>
+
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Profile Header -->
+    <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 mb-8">
+        <div class="flex flex-col sm:flex-row items-start gap-6">
+            <% if (profileUser.avatar_path) { %>
+            <img src="<%= profileUser.avatar_path %>" alt="" class="w-24 h-24 rounded-full object-cover">
+            <% } else { %>
+            <div class="w-24 h-24 rounded-full bg-forest-700 flex items-center justify-center text-3xl font-bold text-forest-100"><%= profileUser.username.charAt(0).toUpperCase() %></div>
+            <% } %>
+            <div class="flex-1">
+                <div class="flex items-center gap-3 mb-1">
+                    <h1 class="text-2xl font-display font-bold text-slate-100"><%= profileUser.display_name || profileUser.username %></h1>
+                    <span class="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 capitalize"><%= profileUser.role %></span>
+                </div>
+                <p class="text-sm text-slate-400 mb-2">@<%= profileUser.username %></p>
+                <% if (profileUser.bio) { %>
+                <p class="text-sm text-slate-300 mb-3"><%= profileUser.bio %></p>
+                <% } %>
+                <div class="flex flex-wrap items-center gap-4 text-sm text-slate-400">
+                    <% if (profileUser.location) { %>
+                    <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-4 h-4"></i> <%= profileUser.location %></span>
+                    <% } %>
+                    <% if (profileUser.van_name || profileUser.van_type) { %>
+                    <span class="flex items-center gap-1"><i data-lucide="truck" class="w-4 h-4"></i> <%= profileUser.van_name ? profileUser.van_name + (profileUser.van_type ? ' (' + profileUser.van_type + ')' : '') : profileUser.van_type %></span>
+                    <% } %>
+                    <span class="flex items-center gap-1"><i data-lucide="star" class="w-4 h-4 text-amber-400"></i> <%= profileUser.reputation %> rep</span>
+                    <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-4 h-4"></i> Joined <%= helpers.formatDate(profileUser.created_at) %></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Tabs -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Forum Posts -->
+        <div>
+            <h2 class="font-display font-semibold text-lg text-slate-200 mb-4 flex items-center gap-2">
+                <i data-lucide="messages-square" class="w-5 h-5"></i> Forum Posts
+            </h2>
+            <% if (posts.length > 0) { %>
+            <div class="space-y-3">
+                <% posts.forEach(post => { %>
+                <a href="/forum/<%= post.category %>/<%= post.slug %>" class="block bg-slate-800/50 border border-slate-700 rounded-lg p-4 hover:border-slate-600 transition-colors">
+                    <h3 class="font-semibold text-slate-200 hover:text-amber-400 line-clamp-1"><%= post.title %></h3>
+                    <div class="flex items-center gap-3 mt-2 text-xs text-slate-500">
+                        <span class="capitalize"><%= post.category %></span>
+                        <span><%= helpers.formatDate(post.created_at, 'relative') %></span>
+                        <span><%= post.reply_count %> replies</span>
+                    </div>
+                </a>
+                <% }) %>
+            </div>
+            <% } else { %>
+            <p class="text-sm text-slate-500">No forum posts yet.</p>
+            <% } %>
+        </div>
+
+        <!-- Builds -->
+        <div>
+            <h2 class="font-display font-semibold text-lg text-slate-200 mb-4 flex items-center gap-2">
+                <i data-lucide="wrench" class="w-5 h-5"></i> Builds
+            </h2>
+            <% if (builds.length > 0) { %>
+            <div class="space-y-3">
+                <% builds.forEach(build => { %>
+                <a href="/builds/<%= build.slug %>" class="block bg-slate-800/50 border border-slate-700 rounded-lg p-4 hover:border-slate-600 transition-colors">
+                    <h3 class="font-semibold text-slate-200 hover:text-amber-400"><%= build.title %></h3>
+                    <p class="text-sm text-slate-400 mt-1"><%= build.base_vehicle || '' %></p>
+                    <div class="flex items-center gap-3 mt-2 text-xs text-slate-500">
+                        <span class="capitalize"><%= build.status %></span>
+                        <% if (build.total_cost) { %><span><%= helpers.formatCurrency(build.total_cost, build.currency) %></span><% } %>
+                    </div>
+                </a>
+                <% }) %>
+            </div>
+            <% } else { %>
+            <p class="text-sm text-slate-500">No builds yet.</p>
+            <% } %>
+        </div>
+
+        <!-- Articles (if any) -->
+        <% if (typeof articles !== 'undefined' && articles.length > 0) { %>
+        <div class="lg:col-span-2">
+            <h2 class="font-display font-semibold text-lg text-slate-200 mb-4 flex items-center gap-2">
+                <i data-lucide="newspaper" class="w-5 h-5"></i> Articles
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <% articles.forEach(article => { %>
+                <%- include('../partials/article-card', { article }) %>
+                <% }) %>
+            </div>
+        </div>
+        <% } %>
+    </div>
+</div>
+
+<%- include('../layouts/end') %>

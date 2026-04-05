@@ -1,0 +1,159 @@
+<%- include('../layouts/main') %>
+
+<div class="max-w-3xl mx-auto px-4 py-8">
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2 text-sm text-slate-400 mb-6">
+        <a href="/campsites" class="hover:text-amber-400">Spots</a>
+        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        <span class="text-slate-200">Submit a Spot</span>
+    </div>
+
+    <h1 class="text-2xl font-display font-bold text-slate-100 mb-6">Submit a Spot</h1>
+
+    <% if (errors && errors.length > 0) { %>
+    <div class="bg-red-900/50 border border-red-700 text-red-200 px-4 py-3 rounded-lg mb-6">
+        <ul class="list-disc list-inside text-sm space-y-1">
+            <% errors.forEach(err => { %>
+            <li><%= err %></li>
+            <% }) %>
+        </ul>
+    </div>
+    <% } %>
+
+    <form method="POST" action="/campsites" enctype="multipart/form-data" class="space-y-6">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <!-- Name -->
+        <div>
+            <label for="name" class="block text-sm font-medium text-slate-300 mb-1">Spot Name *</label>
+            <input type="text" name="name" id="name" required minlength="2"
+                value="<%= campsite ? campsite.name : '' %>"
+                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                placeholder="e.g. Plage de l'Almanarre">
+        </div>
+
+        <!-- Type -->
+        <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1">Type *</label>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <% types.forEach(t => { %>
+                <label class="cursor-pointer">
+                    <input type="radio" name="type" value="<%= t %>" class="sr-only peer" required
+                        <%= campsite && campsite.type === t ? 'checked' : '' %>>
+                    <div class="px-3 py-2 rounded-lg border text-center text-sm font-medium transition-colors
+                        peer-checked:bg-amber-500 peer-checked:text-slate-900 peer-checked:border-amber-500
+                        bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-600 capitalize">
+                        <%= helpers.campsiteTypeLabel(t) %>
+                    </div>
+                </label>
+                <% }) %>
+            </div>
+        </div>
+
+        <!-- Location (map picker) -->
+        <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1">Location * <span class="text-slate-500 font-normal">(click on the map or enter coordinates)</span></label>
+            <div id="location-picker-map" class="h-64 w-full rounded-lg border border-slate-700 mb-3" data-mode="picker"></div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs text-slate-500 mb-1">Latitude</label>
+                    <input type="text" name="latitude" id="latitude" required
+                        value="<%= campsite ? campsite.latitude : '' %>"
+                        class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                        placeholder="46.12345">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-500 mb-1">Longitude</label>
+                    <input type="text" name="longitude" id="longitude" required
+                        value="<%= campsite ? campsite.longitude : '' %>"
+                        class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                        placeholder="6.54321">
+                </div>
+            </div>
+        </div>
+
+        <!-- Country & Region -->
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label for="country" class="block text-sm font-medium text-slate-300 mb-1">Country</label>
+                <input type="text" name="country" id="country"
+                    value="<%= campsite ? campsite.country : '' %>"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                    placeholder="France">
+            </div>
+            <div>
+                <label for="region" class="block text-sm font-medium text-slate-300 mb-1">Region</label>
+                <input type="text" name="region" id="region"
+                    value="<%= campsite ? campsite.region : '' %>"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                    placeholder="Provence-Alpes-Côte d'Azur">
+            </div>
+        </div>
+
+        <!-- Cost -->
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label for="cost_per_night" class="block text-sm font-medium text-slate-300 mb-1">Cost per Night <span class="text-slate-500 font-normal">(leave blank if free)</span></label>
+                <input type="number" name="cost_per_night" id="cost_per_night" step="0.01" min="0"
+                    value="<%= campsite ? campsite.cost_per_night : '' %>"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                    placeholder="0.00">
+            </div>
+            <div>
+                <label for="currency" class="block text-sm font-medium text-slate-300 mb-1">Currency</label>
+                <select name="currency" id="currency"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+                    <option value="EUR" <%= campsite && campsite.currency === 'EUR' ? 'selected' : '' %>>EUR</option>
+                    <option value="GBP" <%= campsite && campsite.currency === 'GBP' ? 'selected' : '' %>>GBP</option>
+                    <option value="USD" <%= campsite && campsite.currency === 'USD' ? 'selected' : '' %>>USD</option>
+                    <option value="CHF" <%= campsite && campsite.currency === 'CHF' ? 'selected' : '' %>>CHF</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Max Vehicle Length -->
+        <div>
+            <label for="max_vehicle_length" class="block text-sm font-medium text-slate-300 mb-1">Max Vehicle Length <span class="text-slate-500 font-normal">(metres)</span></label>
+            <input type="number" name="max_vehicle_length" id="max_vehicle_length" step="0.1" min="0"
+                value="<%= campsite ? campsite.max_vehicle_length : '' %>"
+                class="w-full sm:w-48 bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                placeholder="e.g. 7.5">
+        </div>
+
+        <!-- Amenities -->
+        <div>
+            <label class="block text-sm font-medium text-slate-300 mb-2">Amenities</label>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <% const amenityFields = ['has_water', 'has_electric', 'has_toilet', 'has_shower', 'has_wifi', 'dog_friendly']; %>
+                <% amenityFields.forEach(a => { %>
+                <label class="flex items-center gap-2 cursor-pointer bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 hover:border-slate-600 transition-colors">
+                    <input type="checkbox" name="<%= a %>" value="1"
+                        <%= campsite && campsite[a] ? 'checked' : '' %>
+                        class="rounded border-slate-600 bg-slate-700 text-amber-500 focus:ring-amber-500">
+                    <i data-lucide="<%= helpers.amenityIcon(a) %>" class="w-4 h-4 text-forest-400"></i>
+                    <span class="text-sm text-slate-300"><%= helpers.amenityName(a) %></span>
+                </label>
+                <% }) %>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div>
+            <label for="description" class="block text-sm font-medium text-slate-300 mb-1">Description</label>
+            <textarea name="description" id="description" rows="4"
+                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                placeholder="Describe the spot — access, views, noise levels, etc."><%= campsite ? campsite.description : '' %></textarea>
+        </div>
+
+        <!-- Photos -->
+        <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1">Photos <span class="text-slate-500 font-normal">(up to 5)</span></label>
+            <input type="file" name="photos" accept="image/jpeg,image/png,image/webp" multiple
+                class="block w-full text-sm text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-slate-700 file:text-slate-200 hover:file:bg-slate-600 file:cursor-pointer">
+        </div>
+
+        <button type="submit" class="bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold px-8 py-3 rounded-lg transition-colors text-lg">Submit Spot</button>
+    </form>
+</div>
+
+<%- include('../layouts/end') %>

@@ -1,0 +1,133 @@
+<%- include('../layouts/main') %>
+
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <h1 class="text-3xl font-display font-bold text-slate-100 mb-8">Your Profile</h1>
+
+    <% if (errors && errors.length > 0) { %>
+    <div class="bg-red-900/30 border border-red-800 rounded-lg p-3 mb-6">
+        <% errors.forEach(err => { %>
+        <p class="text-sm text-red-300"><%= err %></p>
+        <% }) %>
+    </div>
+    <% } %>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Profile Form -->
+        <div class="lg:col-span-2">
+            <form method="POST" action="/auth/profile" enctype="multipart/form-data" class="space-y-6">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+                <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
+                    <h2 class="font-display font-semibold text-lg text-slate-200 mb-4">Profile Info</h2>
+
+                    <!-- Avatar -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Avatar</label>
+                        <div class="flex items-center gap-4">
+                            <% if (profileUser.avatar_path) { %>
+                            <img src="<%= profileUser.avatar_path %>" alt="" class="w-16 h-16 rounded-full object-cover">
+                            <% } else { %>
+                            <div class="w-16 h-16 rounded-full bg-forest-700 flex items-center justify-center text-2xl font-bold text-forest-100"><%= profileUser.username.charAt(0).toUpperCase() %></div>
+                            <% } %>
+                            <div>
+                                <input type="file" name="avatar" accept="image/jpeg,image/png,image/webp" class="text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-slate-700 file:text-slate-200 hover:file:bg-slate-600">
+                                <p class="text-xs text-slate-500 mt-1">JPG, PNG, or WebP. Max 5MB. Will be cropped to 200x200.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="display_name" class="block text-sm font-medium text-slate-300 mb-1">Display Name</label>
+                            <input type="text" id="display_name" name="display_name" value="<%= profileUser.display_name || '' %>" maxlength="50"
+                                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+                        </div>
+                        <div>
+                            <label for="location" class="block text-sm font-medium text-slate-300 mb-1">Location</label>
+                            <input type="text" id="location" name="location" value="<%= profileUser.location || '' %>"
+                                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                                placeholder="e.g. Portugal, on the road">
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label for="bio" class="block text-sm font-medium text-slate-300 mb-1">Bio</label>
+                        <textarea id="bio" name="bio" rows="3" maxlength="500"
+                            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                            placeholder="Tell us about yourself..."><%= profileUser.bio || '' %></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                        <div>
+                            <label for="van_name" class="block text-sm font-medium text-slate-300 mb-1">Van Name</label>
+                            <input type="text" id="van_name" name="van_name" value="<%= profileUser.van_name || '' %>"
+                                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                                placeholder="e.g. Bertha">
+                        </div>
+                        <div>
+                            <label for="van_type" class="block text-sm font-medium text-slate-300 mb-1">Vehicle Type</label>
+                            <select id="van_type" name="van_type" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+                                <option value="">Select type...</option>
+                                <% ['Sprinter', 'Transit', 'Crafter', 'Ducato', 'Transporter', 'Vivaro', 'Motorhome', 'Self-build', 'Campervan', 'Truck', 'Car + Tent', 'Other'].forEach(type => { %>
+                                <option value="<%= type %>" <%= profileUser.van_type === type ? 'selected' : '' %>><%= type %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Change Password -->
+                <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
+                    <h2 class="font-display font-semibold text-lg text-slate-200 mb-4">Change Password</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="current_password" class="block text-sm font-medium text-slate-300 mb-1">Current Password</label>
+                            <input type="password" id="current_password" name="current_password"
+                                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="new_password" class="block text-sm font-medium text-slate-300 mb-1">New Password</label>
+                                <input type="password" id="new_password" name="new_password" minlength="8"
+                                    class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+                            </div>
+                            <div>
+                                <label for="new_password_confirm" class="block text-sm font-medium text-slate-300 mb-1">Confirm New Password</label>
+                                <input type="password" id="new_password_confirm" name="new_password_confirm" minlength="8"
+                                    class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold px-6 py-2.5 rounded-lg transition-colors">
+                    Save Changes
+                </button>
+            </form>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
+                <h3 class="font-display font-semibold text-sm text-slate-300 mb-3">Account Info</h3>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between"><span class="text-slate-400">Username</span><span class="text-slate-200">@<%= profileUser.username %></span></div>
+                    <div class="flex justify-between"><span class="text-slate-400">Role</span><span class="text-slate-200 capitalize"><%= profileUser.role %></span></div>
+                    <div class="flex justify-between"><span class="text-slate-400">Reputation</span><span class="text-amber-400 font-semibold"><%= profileUser.reputation %></span></div>
+                    <div class="flex justify-between"><span class="text-slate-400">Joined</span><span class="text-slate-200"><%= helpers.formatDate(profileUser.created_at) %></span></div>
+                </div>
+            </div>
+
+            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
+                <h3 class="font-display font-semibold text-sm text-slate-300 mb-3">Your Content</h3>
+                <div class="space-y-2 text-sm">
+                    <a href="/forum?author=<%= profileUser.username %>" class="flex justify-between text-slate-400 hover:text-amber-400"><span>Forum Posts</span><span><%= posts.length %></span></a>
+                    <a href="/builds?mine=1" class="flex justify-between text-slate-400 hover:text-amber-400"><span>Builds</span><span><%= builds.length %></span></a>
+                    <a href="/campsites?mine=1" class="flex justify-between text-slate-400 hover:text-amber-400"><span>Submitted Spots</span><span><%= campsites.length %></span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../layouts/end') %>

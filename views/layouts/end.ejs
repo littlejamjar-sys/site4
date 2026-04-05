@@ -1,0 +1,48 @@
+    </main>
+
+    <%- include('../partials/footer') %>
+
+    <% if (typeof needsMap !== 'undefined' && needsMap) { %>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="/public/js/map.js"></script>
+    <% } %>
+
+    <% if (typeof needsEditor !== 'undefined' && needsEditor) { %>
+    <script src="/public/js/editor.js"></script>
+    <% } %>
+
+    <script src="/public/js/votes.js"></script>
+    <script src="/public/js/uploads.js"></script>
+
+    <script>
+        lucide.createIcons();
+
+        <% if (isAuthenticated) { %>
+        setInterval(async () => {
+            try {
+                const res = await fetch('/api/notifications');
+                const data = await res.json();
+                const badge = document.getElementById('notification-count');
+                if (badge && data.unreadCount !== undefined) {
+                    if (data.unreadCount > 0) {
+                        badge.textContent = data.unreadCount > 99 ? '99+' : data.unreadCount;
+                        badge.classList.remove('hidden');
+                    } else {
+                        badge.classList.add('hidden');
+                    }
+                }
+            } catch (e) {}
+        }, 60000);
+        <% } %>
+
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (menuBtn && mobileMenu) {
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+    </script>
+</body>
+</html>

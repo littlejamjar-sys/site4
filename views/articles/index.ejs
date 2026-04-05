@@ -1,0 +1,39 @@
+<%- include('../layouts/main') %>
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
+        <div>
+            <h1 class="text-3xl font-display font-bold text-slate-100">Magazine</h1>
+            <p class="text-slate-400 mt-1">Stories, guides, and inspiration from the road.</p>
+        </div>
+        <% if (isAuthenticated && (currentUser.role === 'admin' || currentUser.role === 'contributor')) { %>
+        <a href="/articles/new" class="bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+            <i data-lucide="pen-line" class="w-4 h-4"></i> Write Article
+        </a>
+        <% } %>
+    </div>
+
+    <!-- Category Filter -->
+    <div class="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
+        <a href="/articles" class="px-4 py-1.5 rounded-full text-sm font-medium transition-colors <%= !currentCategory ? 'bg-amber-500 text-slate-900' : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700' %>">All</a>
+        <% categories.forEach(cat => { %>
+        <a href="/articles?category=<%= cat %>" class="px-4 py-1.5 rounded-full text-sm font-medium capitalize transition-colors <%= currentCategory === cat ? 'bg-amber-500 text-slate-900' : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700' %>"><%= cat === 'tips' ? 'Tips & Tricks' : cat === 'gear' ? 'Gear Reviews' : cat %></a>
+        <% }) %>
+    </div>
+
+    <% if (articles.length > 0) { %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% articles.forEach(article => { %>
+        <%- include('../partials/article-card', { article }) %>
+        <% }) %>
+    </div>
+    <%- include('../partials/pagination') %>
+    <% } else { %>
+    <div class="text-center py-16">
+        <i data-lucide="newspaper" class="w-12 h-12 text-slate-600 mx-auto mb-4"></i>
+        <p class="text-lg text-slate-400">No articles yet.</p>
+    </div>
+    <% } %>
+</div>
+
+<%- include('../layouts/end') %>
