@@ -68,6 +68,7 @@ app.use('/public', express.static(path.join(__dirname, 'public'), {
 }));
 
 // Sessions
+const isProduction = process.env.NODE_ENV === 'production';
 app.use(session({
     store: new SQLiteStore({
         db: 'sessions.sqlite',
@@ -77,11 +78,12 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: process.env.NODE_ENV === 'production',
+        secure: isProduction,
         httpOnly: true,
         sameSite: 'lax',
         maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
     },
+    proxy: isProduction, // Trust the reverse proxy for secure cookies
 }));
 
 // Passport
@@ -98,11 +100,19 @@ app.use((req, res, next) => {
     csrfProtection(req, res, next);
 });
 
-// Rate limiting
+// Rate limiting — only limit POST requests (actual login/register attempts)
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 5,
-    message: 'Too many attempts, please try again later.',
+    max: 20,
+    skipSuccessfulRequests: true,
+    skip: (req) => req.method === 'GET', // Don't count page views
+    handler: (req, res) => {
+        res.status(429).render('error', {
+            title: 'Too Many Attempts',
+            message: 'Too many attempts, please try again in 15 minutes.',
+            status: 429,
+        });
+    },
     standardHeaders: true,
     legacyHeaders: false,
 });
@@ -170,13 +180,29 @@ app.use((err, req, res, next) => {
         return res.redirect('back');
     }
     console.error(err.stack);
-    res.status(err.status || 500).render('error', {
-        title: 'Something went wrong',
-        message: process.env.NODE_ENV === 'production'
-            ? 'An unexpected error occurred. Please try again.'
-            : err.message,
-        status: err.status || 500,
-    });
+    const status = err.status || 500;
+    const message = isProduction
+        ? 'An unexpected error occurred. Please try again.'
+        : err.message;
+    try {
+        res.status(status).render('error', {
+            title: 'Something went wrong',
+            message,
+            status,
+        });
+    } catch (renderErr) {
+        // Fallback if the error template itself fails to render
+        console.error('Error rendering error page:', renderErr);
+        res.status(status).send(`
+            <!DOCTYPE html>
+            <html><head><title>Error ${status}</title></head>
+            <body style="font-family:sans-serif;text-align:center;padding:60px;">
+                <h1>${status}</h1>
+                <p>${message}</p>
+                <a href="/">Back to Home</a>
+            </body></html>
+        `);
+    }
 });
 
 // Start server

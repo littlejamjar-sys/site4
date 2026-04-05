@@ -18,37 +18,41 @@ router.get('/register', (req, res) => {
 });
 
 // POST /auth/register
-router.post('/register', upload.none(), async (req, res) => {
-    const db = req.app.locals.db;
-    const { username, email, password, password_confirm } = req.body;
-    const errors = [];
+router.post('/register', upload.none(), async (req, res, next) => {
+    try {
+        const db = req.app.locals.db;
+        const { username, email, password, password_confirm } = req.body;
+        const errors = [];
 
-    if (!username || username.length < 3 || username.length > 30) errors.push('Username must be 3-30 characters.');
-    if (username && !/^[a-zA-Z0-9_-]+$/.test(username)) errors.push('Username can only contain letters, numbers, hyphens and underscores.');
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push('Please enter a valid email address.');
-    if (!password || password.length < 8) errors.push('Password must be at least 8 characters.');
-    if (password !== password_confirm) errors.push('Passwords do not match.');
+        if (!username || username.length < 3 || username.length > 30) errors.push('Username must be 3-30 characters.');
+        if (username && !/^[a-zA-Z0-9_-]+$/.test(username)) errors.push('Username can only contain letters, numbers, hyphens and underscores.');
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push('Please enter a valid email address.');
+        if (!password || password.length < 8) errors.push('Password must be at least 8 characters.');
+        if (password !== password_confirm) errors.push('Passwords do not match.');
 
-    if (errors.length === 0) {
-        const existingUser = db.prepare('SELECT id FROM users WHERE username = ? OR email = ?').get(username, email);
-        if (existingUser) errors.push('Username or email already taken.');
-    }
-
-    if (errors.length > 0) {
-        return res.render('auth/register', { title: 'Join', errors, username, email });
-    }
-
-    const password_hash = bcrypt.hashSync(password, 12);
-    const result = db.prepare('INSERT INTO users (username, email, password_hash, display_name) VALUES (?, ?, ?, ?)').run(username, email, password_hash, username);
-
-    req.login({ id: result.lastInsertRowid, username, email, role: 'member', reputation: 0 }, (err) => {
-        if (err) {
-            req.flash('error', 'Registration succeeded but login failed. Please log in.');
-            return res.redirect('/auth/login');
+        if (errors.length === 0) {
+            const existingUser = db.prepare('SELECT id FROM users WHERE username = ? OR email = ?').get(username, email);
+            if (existingUser) errors.push('Username or email already taken.');
         }
-        req.flash('success', 'Welcome to The Overland Post!');
-        res.redirect('/');
-    });
+
+        if (errors.length > 0) {
+            return res.render('auth/register', { title: 'Join', errors, username, email });
+        }
+
+        const password_hash = bcrypt.hashSync(password, 12);
+        const result = db.prepare('INSERT INTO users (username, email, password_hash, display_name) VALUES (?, ?, ?, ?)').run(username, email, password_hash, username);
+
+        req.login({ id: result.lastInsertRowid, username, email, role: 'member', reputation: 0 }, (err) => {
+            if (err) {
+                req.flash('error', 'Registration succeeded but login failed. Please log in.');
+                return res.redirect('/auth/login');
+            }
+            req.flash('success', 'Welcome to The Overland Post!');
+            res.redirect('/');
+        });
+    } catch (err) {
+        next(err);
+    }
 });
 
 // GET /auth/login
@@ -62,10 +66,10 @@ router.post('/login', (req, res, next) => {
     passport.authenticate('local', (err, user, info) => {
         if (err) return next(err);
         if (!user) {
-            return res.render('auth/login', { title: 'Log In', errors: [info.message || 'Invalid credentials.'], email: req.body.email });
+            return res.render('auth/login', { title: 'Log In', errors: [info?.message || 'Invalid credentials.'], email: req.body.email });
         }
-        req.login(user, (err) => {
-            if (err) return next(err);
+        req.login(user, (loginErr) => {
+            if (loginErr) return next(loginErr);
             const returnTo = req.session.returnTo || '/';
             delete req.session.returnTo;
             req.flash('success', `Welcome back, ${user.display_name || user.username}!`);
@@ -84,13 +88,17 @@ router.get('/logout', (req, res) => {
 });
 
 // GET /auth/profile
-router.get('/profile', ensureAuth, (req, res) => {
-    const db = req.app.locals.db;
-    const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
-    const posts = db.prepare('SELECT * FROM forum_posts WHERE author_id = ? ORDER BY created_at DESC LIMIT 10').all(req.user.id);
-    const builds = db.prepare('SELECT * FROM builds WHERE owner_id = ? ORDER BY created_at DESC').all(req.user.id);
-    const campsites = db.prepare('SELECT * FROM campsites WHERE submitted_by = ? ORDER BY created_at DESC').all(req.user.id);
-    res.render('auth/profile', { title: 'Your Profile', profileUser: user, posts, builds, campsites, errors: [] });
+router.get('/profile', ensureAuth, (req, res, next) => {
+    try {
+        const db = req.app.locals.db;
+        const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
+        const posts = db.prepare('SELECT * FROM forum_posts WHERE author_id = ? ORDER BY created_at DESC LIMIT 10').all(req.user.id);
+        const builds = db.prepare('SELECT * FROM builds WHERE owner_id = ? ORDER BY created_at DESC').all(req.user.id);
+        const campsites = db.prepare('SELECT * FROM campsites WHERE submitted_by = ? ORDER BY created_at DESC').all(req.user.id);
+        res.render('auth/profile', { title: 'Your Profile', profileUser: user, posts, builds, campsites, errors: [] });
+    } catch (err) {
+        next(err);
+    }
 });
 
 // POST /auth/profile
@@ -154,15 +162,19 @@ router.post('/profile', ensureAuth, upload.single('avatar'), async (req, res) =>
 });
 
 // GET /auth/user/:username (public profile)
-router.get('/user/:username', (req, res) => {
-    const db = req.app.locals.db;
-    const user = db.prepare('SELECT id, username, display_name, bio, avatar_path, location, van_name, van_type, role, reputation, created_at FROM users WHERE username = ?').get(req.params.username);
-    if (!user) return res.status(404).render('error', { title: '404', message: 'User not found.', status: 404 });
+router.get('/user/:username', (req, res, next) => {
+    try {
+        const db = req.app.locals.db;
+        const user = db.prepare('SELECT id, username, display_name, bio, avatar_path, location, van_name, van_type, role, reputation, created_at FROM users WHERE username = ?').get(req.params.username);
+        if (!user) return res.status(404).render('error', { title: '404', message: 'User not found.', status: 404 });
 
-    const posts = db.prepare('SELECT * FROM forum_posts WHERE author_id = ? ORDER BY created_at DESC LIMIT 10').all(user.id);
-    const builds = db.prepare(`SELECT b.*, u.username, u.display_name, u.avatar_path FROM builds b JOIN users u ON b.owner_id = u.id WHERE b.owner_id = ? ORDER BY b.created_at DESC`).all(user.id);
-    const articles = db.prepare(`SELECT a.*, u.username, u.display_name, u.avatar_path FROM articles a JOIN users u ON a.author_id = u.id WHERE a.author_id = ? AND a.status = 'published' ORDER BY a.published_at DESC LIMIT 10`).all(user.id);
-    res.render('auth/public-profile', { title: user.display_name || user.username, profileUser: user, posts, builds, articles });
+        const posts = db.prepare('SELECT * FROM forum_posts WHERE author_id = ? ORDER BY created_at DESC LIMIT 10').all(user.id);
+        const builds = db.prepare(`SELECT b.*, u.username, u.display_name, u.avatar_path FROM builds b JOIN users u ON b.owner_id = u.id WHERE b.owner_id = ? ORDER BY b.created_at DESC`).all(user.id);
+        const articles = db.prepare(`SELECT a.*, u.username, u.display_name, u.avatar_path FROM articles a JOIN users u ON a.author_id = u.id WHERE a.author_id = ? AND a.status = 'published' ORDER BY a.published_at DESC LIMIT 10`).all(user.id);
+        res.render('auth/public-profile', { title: user.display_name || user.username, profileUser: user, posts, builds, articles });
+    } catch (err) {
+        next(err);
+    }
 });
 
 module.exports = router;

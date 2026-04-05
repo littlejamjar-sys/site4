@@ -21,4 +21,27 @@ jobs:
           rsync -av --delete \
             --exclude='.git' \
             --exclude='.github' \
+            --exclude='node_modules' \
+            --exclude='.env' \
+            --exclude='db/*.sqlite' \
+            --exclude='public/uploads' \
             $GITHUB_WORKSPACE/ /var/www/site4/
+
+      - name: Install dependencies
+        working-directory: /var/www/site4
+        run: npm install --omit=dev
+
+      - name: Run database migrations
+        working-directory: /var/www/site4
+        run: node db/migrate.js
+
+      - name: Restart application
+        run: |
+          if command -v pm2 &> /dev/null; then
+            pm2 restart site4 --update-env 2>/dev/null || pm2 start /var/www/site4/server.js --name site4
+          elif systemctl is-active --quiet site4; then
+            sudo systemctl restart site4
+          else
+            echo "WARNING: No process manager found. Please restart the app manually."
+            echo "Consider setting up pm2 or a systemd service."
+          fi
