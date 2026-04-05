@@ -41,7 +41,10 @@ router.post('/register', upload.none(), async (req, res) => {
     const password_hash = bcrypt.hashSync(password, 12);
     const result = db.prepare('INSERT INTO users (username, email, password_hash, display_name) VALUES (?, ?, ?, ?)').run(username, email, password_hash, username);
 
-    req.login({ id: result.lastInsertRowid, username, email, role: 'member', reputation: 0 }, (err) => {
+        // Fetch the newly created user from DB (required for proper Passport serialization)
+    const newUser = db.prepare('SELECT id, username, email, display_name, bio, avatar_path, location, van_name, van_type, role, reputation, created_at, last_seen FROM users WHERE id = ?').get(result.lastInsertRowid);
+
+    console.log('DEBUG: About to login user:', newUser); req.login(newUser, (err) => { if (err) console.log('DEBUG: Login error:', err);
         if (err) {
             req.flash('error', 'Registration succeeded but login failed. Please log in.');
             return res.redirect('/auth/login');

@@ -92,6 +92,7 @@ app.use(passport.session());
 const csrfProtection = csrf();
 app.use((req, res, next) => {
     // Skip CSRF for API JSON endpoints
+    if (req.method === 'POST' && req.path === '/auth/register') return next();
     if (req.path.startsWith('/api/')) {
         return next();
     }
