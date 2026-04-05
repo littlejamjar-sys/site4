@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= typeof title !== 'undefined' ? title + ' \u2014 ' : '' %><%= locals.siteName || 'The Overland Post' %></title>
+    <title><%= typeof title !== 'undefined' ? title + ' \u2014 ' : '' %><%= locals.siteName || 'Dustline' %></title>
     <meta name="description" content="<%= typeof description !== 'undefined' ? description : 'A vanlife community platform for routes, campsites, builds, and more.' %>">
 
     <!-- Tailwind CSS CDN -->
@@ -18,7 +18,7 @@
                     slate: { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a', 950: '#020617' },
                 },
                 fontFamily: {
-                    display: ['Space Grotesk', 'system-ui', 'sans-serif'],
+                    display: ['Playfair Display', 'system-ui', 'serif'],
                     body: ['Inter', 'system-ui', 'sans-serif'],
                 },
             }
@@ -28,6 +28,8 @@
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700<link rel="preconnect" href="https://fonts.googleapis.com">family=Space+Mono:wght@400;700<link rel="preconnect" href="https://fonts.googleapis.com">display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
@@ -41,6 +43,7 @@
     <% } %>
 
     <link rel="stylesheet" href="/public/css/style.css">
+    <link rel="icon" href="/images/dustline-logo.svg" type="image/svg+xml">
 </head>
 <body class="bg-slate-900 text-slate-100 font-body min-h-screen flex flex-col">
     <%- include('../partials/header') %>

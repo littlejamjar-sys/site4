@@ -19,26 +19,26 @@
   background: rgba(255,255,255,0.08);
 }
 .nav-link.active {
-  color: #e8a020;
+  color: #C45E1F;
 }
 .nav-link.cta-nav {
-  background: #e8a020;
+  background: #C45E1F;
   color: #1a1f2e;
   font-weight: 600;
   margin-left: 0.5rem;
 }
 .nav-link.cta-nav:hover {
-  background: #f5bc50;
+  background: #B8542F;
   color: #1a1f2e;
 }
 .nav-link.active-cta {
-  background: #f5bc50;
+  background: #B8542F;
 }
 
 /* ── Buttons ────────────────────────────────────────────────────── */
 .btn-primary {
   display: inline-block;
-  background: #e8a020;
+  background: #C45E1F;
   color: #1a1f2e;
   font-weight: 700;
   font-size: 1rem;
@@ -48,7 +48,7 @@
   transition: background 0.15s, transform 0.15s;
 }
 .btn-primary:hover {
-  background: #f5bc50;
+  background: #B8542F;
   transform: translateY(-1px);
 }
 
@@ -87,7 +87,7 @@
   height: 2.75rem;
   border-radius: 0.75rem;
   background: rgba(232,160,32,0.15);
-  color: #e8a020;
+  color: #C45E1F;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -117,7 +117,7 @@
   height: 3.25rem;
   border-radius: 0.875rem;
   background: rgba(232,160,32,0.12);
-  color: #e8a020;
+  color: #C45E1F;
   display: flex;
   align-items: center;
   justify-content: center;
