@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+</head>
+<body class="bg-slate-50">
+    <%- include('../shared/nav') %>
+    
+    <div class="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <!-- Profile Header -->
+            <div class="bg-white border border-slate-200 rounded-lg p-8 mb-8">
+                <div class="flex gap-8 items-start">
+                    <!-- Avatar -->
+                    <div class="flex-shrink-0">
+                        <% if (user.avatar_path) { %>
+                            <img src="<%= user.avatar_path %>" alt="<%= user.display_name %>" 
+                                 class="w-24 h-24 rounded-full object-cover border-4 border-blue-200">
+                        <% } else { %>
+                            <div class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-3xl font-bold">
+                                <%= user.username.charAt(0).toUpperCase() %>
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <!-- Profile Info -->
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h1 class="text-3xl font-bold text-slate-900">
+                                    <%= user.display_name || user.username %>
+                                </h1>
+                                <p class="text-slate-600">@<%= user.username %></p>
+                            </div>
+                            <% if (currentUser && currentUser.id === user.id) { %>
+                                <a href="/users/<%= user.username %>/edit" 
+                                   class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                                    Edit Profile
+                                </a>
+                            <% } %>
+                        </div>
+
+                        <% if (user.bio) { %>
+                            <p class="text-slate-700 mb-4"><%= user.bio %></p>
+                        <% } %>
+
+                        <div class="flex flex-wrap gap-4 text-sm text-slate-600">
+                            <% if (user.location) { %>
+                                <div>📍 <%= user.location %></div>
+                            <% } %>
+                            <% if (user.van_name) { %>
+                                <div>🚐 <%= user.van_name %></div>
+                            <% } %>
+                            <% if (user.van_type) { %>
+                                <div>(<%= user.van_type %>)</div>
+                            <% } %>
+                            <div>Joined <%= new Date(user.created_at).toLocaleDateString() %></div>
+                        </div>
+
+                        <!-- Stats -->
+                        <div class="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-slate-200">
+                            <div>
+                                <div class="text-2xl font-bold text-slate-900"><%= articleCount %></div>
+                                <div class="text-sm text-slate-600">Article<%= articleCount !== 1 ? 's' : '' %></div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-slate-900"><%= forumPosts.length %></div>
+                                <div class="text-sm text-slate-600">Forum Post<%= forumPosts.length !== 1 ? 's' : '' %></div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-slate-900"><%= repliesCount %></div>
+                                <div class="text-sm text-slate-600">Repl<%= repliesCount !== 1 ? 'ies' : 'y' %></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <% if (articles.length > 0 || forumPosts.length > 0) { %>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Recent Articles -->
+                    <% if (articles.length > 0) { %>
+                        <section>
+                            <h2 class="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                                <span class="text-2xl">📝</span> Recent Articles
+                            </h2>
+                            <div class="space-y-3">
+                                <% articles.forEach(article => { %>
+                                    <div class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow transition">
+                                        <a href="/articles/<%= article.slug %>" class="text-blue-600 hover:underline font-semibold">
+                                            <%= article.title %>
+                                        </a>
+                                        <div class="text-sm text-slate-500 mt-1">
+                                            <%= new Date(article.created_at).toLocaleDateString() %>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        </section>
+                    <% } %>
+
+                    <!-- Recent Forum Posts -->
+                    <% if (forumPosts.length > 0) { %>
+                        <section>
+                            <h2 class="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                                <span class="text-2xl">💬</span> Recent Forum Posts
+                            </h2>
+                            <div class="space-y-3">
+                                <% forumPosts.forEach(post => { %>
+                                    <div class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow transition">
+                                        <a href="/forum/<%= post.slug %>" class="text-blue-600 hover:underline font-semibold">
+                                            <%= post.title %>
+                                        </a>
+                                        <div class="text-sm text-slate-500 mt-1">
+                                            <%= new Date(post.created_at).toLocaleDateString() %>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        </section>
+                    <% } %>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <%- include('../shared/footer') %>
+</body>
+</html>

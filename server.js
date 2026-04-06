@@ -153,6 +153,8 @@ app.use('/routes', require('./routes/routes'));
 app.use('/builds', require('./routes/builds'));
 app.use('/admin', require('./routes/admin'));
 app.use('/api', require('./routes/api'));
+app.use('/search', require('./routes/search'));
+app.use('/users', require('./routes/profiles'));
 
 // 404 handler
 app.use((req, res) => {
