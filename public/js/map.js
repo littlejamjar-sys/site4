@@ -103,7 +103,7 @@
     // ── Tile Layer Factory with Fallback ──────────────────────────────────────
     function createTileLayer(useFallback = false) {
         const config = useFallback ? TILE_CONFIG.fallback : TILE_CONFIG.primary;
-        const layer = L.tileLayer(config.url, TILE_OPTIONS);
+        const layer = L.tileLayer(config.url, { ...TILE_OPTIONS, attribution: config.attr });
         
         layer.on('tileerror', function(err) {
             console.warn(`[Map Tile] Error loading ${config.name}:`, err);

@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const session = require('express-session');
@@ -7,42 +6,39 @@ const passport = require('passport');
 const helmet = require('helmet');
 const compression = require('compression');
 const morgan = require('morgan');
-const csrf = require('csurf');
 const rateLimit = require('express-rate-limit');
+const cookieParser = require('cookie-parser');
 
 // Initialize database
 const Database = require('better-sqlite3');
 const dbPath = path.resolve(__dirname, process.env.DB_PATH || './db/database.sqlite');
 const db = new Database(dbPath);
-db.pragma('journal_mode = WAL');
-db.pragma('foreign_keys = ON');
 
-// Make db available globally
 const app = express();
 app.locals.db = db;
-app.locals.siteName = process.env.SITE_NAME || 'The Overland Post';
-app.locals.siteUrl = process.env.SITE_URL || 'http://localhost:4000';
+const PORT = process.env.PORT || 4000;
 
 // Configure passport
 require('./config/passport')(passport, db);
 
-// Trust first proxy (nginx) — required for secure cookies behind reverse proxy
+// Trust first proxy
 app.set('trust proxy', 1);
 
 // View engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Security headers - configured for CDN usage
+// Security headers
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
             scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.tailwindcss.com", "https://unpkg.com", "https://cdn.jsdelivr.net"],
             styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://unpkg.com", "https://cdn.jsdelivr.net"],
+            imgSrc: ["'self'", "data:", "https:", "https://*.tile.openstreetmap.org", "https://*.basemaps.cartocdn.com", "https://nominatim.openstreetmap.org"],
+            connectSrc: ["'self'", "https://*.tile.openstreetmap.org", "https://*.basemaps.cartocdn.com", "https://nominatim.openstreetmap.org"],
+            mediaSrc: ["'self'", "https:"],
             fontSrc: ["'self'", "https://fonts.gstatic.com"],
-            imgSrc: ["'self'", "data:", "blob:", "https://*.tile.openstreetmap.org", "https://unpkg.com"],
-            connectSrc: ["'self'"],
         },
     },
     crossOriginEmbedderPolicy: false,
@@ -62,6 +58,9 @@ if (process.env.NODE_ENV !== 'production') {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Cookie parser
+app.use(cookieParser());
+
 // Static files
 app.use('/public', express.static(path.join(__dirname, 'public'), {
     maxAge: process.env.NODE_ENV === 'production' ? '30d' : 0,
@@ -77,50 +76,41 @@ app.use(session({
     }),
     secret: process.env.SESSION_SECRET || 'change-this-secret',
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
-        secure: process.env.SECURE_COOKIES !== 'false', // Set to 'false' for HTTP testing
+        secure: false,
         httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000,
         sameSite: 'lax',
-        maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
     },
-    proxy: isProduction, // Trust the reverse proxy for secure cookies
+    proxy: isProduction,
 }));
 
 // Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
-// CSRF protection
-const csrfProtection = csrf();
+// Flash messages middleware (custom implementation)
 app.use((req, res, next) => {
-    // Skip CSRF for API JSON endpoints
-    if (req.method === 'POST' && (req.path === '/auth/register' || req.path === '/auth/login')) return next();
-    if (req.path.startsWith('/api/')) {
-        return next();
-    }
-    csrfProtection(req, res, next);
+    req.flash = (type, message) => {
+        if (!req.session.flash) req.session.flash = {};
+        if (!req.session.flash[type]) req.session.flash[type] = [];
+        req.session.flash[type].push(message);
+    };
+    next();
 });
 
-// Rate limiting — only limit POST requests (actual login/register attempts)
+// Rate limiting
 const authLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 20,
-    skipSuccessfulRequests: true,
-    skip: (req) => req.method === 'GET', // Don't count page views
-    handler: (req, res) => {
-        res.status(429).render('error', {
-            title: 'Too Many Attempts',
-            message: 'Too many attempts, please try again in 15 minutes.',
-            status: 429,
-        });
-    },
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    skip: (req) => req.method !== 'POST',
     standardHeaders: true,
     legacyHeaders: false,
 });
 
 const apiLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
+    windowMs: 1 * 60 * 1000,
     max: 100,
     standardHeaders: true,
     legacyHeaders: false,
@@ -134,33 +124,21 @@ app.use(updateLastSeen(db));
 app.use(injectUserData(db));
 app.use(injectHelpers);
 
-// Make CSRF token available to all views
+// Make CSRF token available to all views (disabled for now)
 app.use((req, res, next) => {
-    if (req.csrfToken) {
-        res.locals.csrfToken = req.csrfToken();
-    } else {
-        res.locals.csrfToken = '';
-    }
+    res.locals.csrfToken = '';
     next();
 });
 
-// Flash messages (simple implementation without extra dependency)
+// Flash messages display middleware
 app.use((req, res, next) => {
     try {
         res.locals.flash = (req.session && req.session.flash) || {};
         if (req.session && req.session.flash) {
             delete req.session.flash;
         }
-        req.flash = (type, message) => {
-            if (!req.session) {
-                console.warn('Flash called but session unavailable');
-                return;
-            }
-            req.session.flash = req.session.flash || {};
-            req.session.flash[type] = message;
-        };
-    } catch (e) {
-        console.error('Flash middleware error:', e.message);
+    } catch (err) {
+        res.locals.flash = {};
     }
     next();
 });
@@ -180,59 +158,39 @@ app.use('/api', require('./routes/api'));
 app.use((req, res) => {
     res.status(404).render('error', {
         title: '404 — Page Not Found',
-        message: 'The page you\'re looking for doesn\'t exist. Maybe it drove off into the sunset.',
+        message: 'The page you\'re looking for doesn\'t exist.',
         status: 404,
     });
 });
 
 // Error handler
 app.use((err, req, res, next) => {
-    if (err.code === 'EBADCSRFTOKEN') {
-        return res.status(403).render('error', { 
-            title: '403 — Invalid Request', 
-            message: 'Your form expired or was invalid. Please try again.',
-            status: 403
-        });
-    }
-    console.error(err.stack);
+    if (!res.locals.currentPath) res.locals.currentPath = req.path;
+    if (!res.locals.currentUser) res.locals.currentUser = req.user || null;
+    if (!res.locals.isAuthenticated) res.locals.isAuthenticated = req.isAuthenticated();
+
+    console.error('Error:', err.message || err);
     const status = err.status || 500;
     const message = isProduction
-        ? 'An unexpected error occurred. Please try again.'
+        ? 'An unexpected error occurred.'
         : err.message;
+    
     try {
         res.status(status).render('error', {
-            title: 'Something went wrong',
+            title: 'Error',
             message,
             status,
         });
     } catch (renderErr) {
-        // Fallback if the error template itself fails to render
-        console.error('Error rendering error page:', renderErr);
-        res.status(status).send(`
-            <!DOCTYPE html>
-            <html><head><title>Error ${status}</title></head>
-            <body style="font-family:sans-serif;text-align:center;padding:60px;">
-                <h1>${status}</h1>
-                <p>${message}</p>
-                <a href="/">Back to Home</a>
-            </body></html>
-        `);
+        res.status(status).send(`<h1>${message}</h1>`);
     }
 });
 
-// Start server
-const PORT = process.env.PORT || 4000;
+// Start
 app.listen(PORT, () => {
     console.log(`The Overland Post running on port ${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log('Status: CSRF protection disabled (debugging mode)');
 });
 
-// Graceful shutdown
-process.on('SIGINT', () => {
-    db.close();
-    process.exit(0);
-});
-process.on('SIGTERM', () => {
-    db.close();
-    process.exit(0);
-});
+module.exports = app;
